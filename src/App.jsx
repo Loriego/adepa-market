@@ -50,7 +50,7 @@ export default function App() {
         <CartProvider>
           <BrowserRouter>
             <Routes>
-              {/* CUSTOMER ROUTES */}
+              {/* CUSTOMER */}
               <Route path="/" element={<Home />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/cart" element={<Cart />} />
@@ -67,49 +67,128 @@ export default function App() {
               <Route path="/success" element={<Success />} />
               <Route path="/order-success" element={<OrderSuccess />} />
 
-              {/* SELLER SIGNUP / STORE */}
+              {/* VENDOR */}
               <Route path="/vendor" element={<VendorSignup />} />
               <Route path="/sell" element={<VendorSignup />} />
               <Route path="/vendor-signup" element={<VendorSignup />} />
               <Route path="/vendor-store" element={<VendorStore />} />
-              <Route path="/vendor-store/:vendorId" element={<VendorStore />} />
 
-              {/* VENDOR DASHBOARD ROUTES */}
-              <Route path="/vendor-dashboard" element={<VendorLayout />}>
-                <Route index element={<VendorDashboard />} />
-                <Route path="dashboard" element={<VendorDashboard />} />
-                <Route path="add-product" element={<VendorAddProduct />} />
-                <Route path="products" element={<VendorProducts />} />
-                <Route path="edit-product/:id" element={<VendorEditProduct />} />
-                <Route path="orders" element={<VendorOrders />} />
-                <Route path="earnings" element={<VendorEarnings />} />
+              <Route
+                path="/vendor-dashboard"
+                element={<VendorLayout />}
+              >
+                <Route
+                  index
+                  element={<VendorDashboard />}
+                />
+
+                <Route
+                  path="dashboard"
+                  element={<VendorDashboard />}
+                />
+
+                <Route
+                  path="add-product"
+                  element={<VendorAddProduct />}
+                />
+
+                <Route
+                  path="products"
+                  element={<VendorProducts />}
+                />
+
+                <Route
+                  path="edit-product/:id"
+                  element={<VendorEditProduct />}
+                />
+
+                <Route
+                  path="orders"
+                  element={<VendorOrders />}
+                />
+
+                <Route
+                  path="earnings"
+                  element={<VendorEarnings />}
+                />
               </Route>
 
-              {/* OLD VENDOR LINKS SUPPORT */}
-              <Route path="/vendor/dashboard" element={<VendorLayout />}>
-                <Route index element={<VendorDashboard />} />
-              </Route>
-              <Route path="/vendor/add-product" element={<VendorAddProduct />} />
-              <Route path="/vendor/products" element={<VendorProducts />} />
-              <Route path="/vendor/edit-product/:id" element={<VendorEditProduct />} />
-              <Route path="/vendor/orders" element={<VendorOrders />} />
-              <Route path="/vendor/earnings" element={<VendorEarnings />} />
+              {/* OLD LINKS */}
+              <Route
+                path="/vendor/dashboard"
+                element={<VendorDashboard />}
+              />
 
-              {/* ADMIN ROUTES */}
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/add-product" element={<AddProduct />} />
-              <Route path="/admin/edit-product/:id" element={<EditProduct />} />
+              <Route
+                path="/vendor/add-product"
+                element={<VendorAddProduct />}
+              />
 
-              {/* BOTH LINKS WORK NOW */}
-              <Route path="/admin/products" element={<ManageProducts />} />
-              <Route path="/admin/manage-products" element={<ManageProducts />} />
+              <Route
+                path="/vendor/products"
+                element={<VendorProducts />}
+              />
 
-              <Route path="/admin/orders" element={<Orders />} />
-              <Route path="/admin/vendors" element={<Vendors />} />
-              <Route path="/admin/vendor-payouts" element={<VendorPayouts />} />
-              <Route path="/admin/payouts" element={<VendorPayouts />} />
-              <Route path="/admin/send-notification" element={<SendNotification />} />
+              <Route
+                path="/vendor/orders"
+                element={<VendorOrders />}
+              />
+
+              <Route
+                path="/vendor/earnings"
+                element={<VendorEarnings />}
+              />
+
+              {/* ADMIN */}
+              <Route
+                path="/admin"
+                element={<AdminDashboard />}
+              />
+
+              <Route
+                path="/admin/dashboard"
+                element={<AdminDashboard />}
+              />
+
+              <Route
+                path="/admin/add-product"
+                element={<AddProduct />}
+              />
+
+              <Route
+                path="/admin/edit-product/:id"
+                element={<EditProduct />}
+              />
+
+              <Route
+                path="/admin/products"
+                element={<ManageProducts />}
+              />
+
+              <Route
+                path="/admin/manage-products"
+                element={<ManageProducts />}
+              />
+
+              <Route
+                path="/admin/orders"
+                element={<Orders />}
+              />
+
+              <Route
+                path="/admin/vendors"
+                element={<Vendors />}
+              />
+
+              <Route
+                path="/admin/vendor-payouts"
+                element={<VendorPayouts />}
+              />
+
+              <Route
+                path="/admin/send-notification"
+                element={<SendNotification />}
+              />
 
               {/* 404 */}
               <Route path="*" element={<NotFound />} />

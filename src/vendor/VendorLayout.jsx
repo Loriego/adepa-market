@@ -38,9 +38,9 @@ export default function VendorLayout() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-[280px] bg-white shadow-xl p-6">
+    <div className="flex min-h-screen bg-gray-100 overflow-x-hidden">
+      {/* SIDEBAR */}
+      <aside className="w-[280px] min-h-screen bg-white shadow-xl p-6 shrink-0">
         <h1 className="text-5xl font-black text-orange-600">
           Vendor Panel
         </h1>
@@ -49,20 +49,23 @@ export default function VendorLayout() {
           Adepa Seller Center
         </p>
 
-        <div className="mt-10 flex flex-col gap-4">
+        <div className="mt-10 flex flex-col gap-5">
           {menu.map((item) => (
             <NavLink
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-lg transition ${
+                `flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-lg transition-all ${
                   isActive
                     ? "bg-orange-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-orange-100"
                 }`
               }
             >
-              <span className="text-2xl">{item.icon}</span>
+              <span className="text-2xl">
+                {item.icon}
+              </span>
+
               {item.name}
             </NavLink>
           ))}
@@ -77,8 +80,8 @@ export default function VendorLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
+      {/* CONTENT */}
+      <main className="flex-1 p-4 md:p-8 overflow-x-hidden min-w-0">
         <Outlet />
       </main>
     </div>

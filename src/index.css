@@ -1,25 +1,29 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
 
 body {
-  margin: 0;
+  background: #f3f4f6;
   font-family: Inter, sans-serif;
-  background: #f8fafc;
-}
-.pay-btn {
-  width: 100%;
-  background: #ff4d00;
-  color: white;
-  border: none;
-  padding: 18px;
-  border-radius: 999px;
-  font-size: 18px;
-  font-weight: 900;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: 0.3s;
-}
-
-.pay-btn:hover {
-  background: #000;
-  transform: scale(1.02);
 }
