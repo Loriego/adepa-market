@@ -13,22 +13,24 @@ import {
   Package,
   BriefcaseBusiness,
 } from "lucide-react";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
+
 import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   const { cartItems } = useCart();
-  const { user, logout } = useAuth();
   const { wishlist } = useWishlist();
+  const { user, logout } = useAuth();
 
   const navClass = ({ isActive }) =>
-    `relative px-3 py-2 rounded-full transition-all duration-300 ${
+    `relative px-4 py-2 rounded-full font-bold transition-all duration-300 ${
       isActive
         ? "bg-orange-600 text-white shadow-lg"
         : "text-black hover:bg-orange-50 hover:text-orange-600"
@@ -37,20 +39,26 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        initial={{ y: -90, opacity: 0 }}
+        initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white/95 backdrop-blur-xl shadow-sm sticky top-0 z-50"
+        transition={{ duration: 0.4 }}
+        className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl shadow-sm"
       >
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+
+          {/* LOGO */}
+
           <Link
             to="/"
-            className="text-xl lg:text-2xl font-black text-orange-600 whitespace-nowrap"
+            className="text-2xl lg:text-3xl font-black text-orange-600 whitespace-nowrap"
           >
             Adepa Market
           </Link>
 
-          <div className="hidden xl:flex items-center gap-2 font-bold text-sm">
+          {/* DESKTOP MENU */}
+
+          <div className="hidden xl:flex items-center gap-2 text-sm">
+
             <NavLink to="/" className={navClass}>
               Home
             </NavLink>
@@ -67,20 +75,24 @@ export default function Navbar() {
               Orders
             </NavLink>
 
-            <NavLink to="/become-vendor" className={navClass}>
+            <NavLink to="/vendor" className={navClass}>
               Sell
             </NavLink>
 
-            <NavLink to="/vendor/dashboard" className={navClass}>
+            <NavLink to="/vendor-dashboard" className={navClass}>
               Vendor
             </NavLink>
 
             <NavLink to="/contact" className={navClass}>
               Contact
             </NavLink>
+
           </div>
 
+          {/* RIGHT SECTION */}
+
           <div className="hidden xl:flex items-center gap-3">
+
             {user ? (
               <>
                 <NotificationBell />
@@ -88,7 +100,7 @@ export default function Navbar() {
                 <NavLink
                   to="/account"
                   className={({ isActive }) =>
-                    `px-4 py-2 rounded-full font-black text-sm transition ${
+                    `px-5 py-2 rounded-full font-black text-sm transition ${
                       isActive
                         ? "bg-black text-white"
                         : "bg-orange-600 text-white hover:bg-orange-700"
@@ -98,14 +110,14 @@ export default function Navbar() {
                   Account
                 </NavLink>
 
-                <span className="bg-slate-100 px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 max-w-[150px] truncate">
+                <div className="bg-slate-100 px-5 py-2 rounded-full font-bold text-sm flex items-center gap-2 max-w-[180px] truncate">
                   <User size={16} />
-                  {user.email.split("@")[0]}
-                </span>
+                  {user?.email?.split("@")[0]}
+                </div>
 
                 <button
                   onClick={logout}
-                  className="bg-black text-white px-4 py-2 rounded-full font-black text-sm flex items-center gap-2 hover:bg-red-600 transition active:scale-95"
+                  className="bg-black text-white px-5 py-2 rounded-full font-black text-sm flex items-center gap-2 hover:bg-red-600 transition"
                 >
                   <LogOut size={16} />
                   Logout
@@ -116,7 +128,7 @@ export default function Navbar() {
                 <NavLink
                   to="/login"
                   className={({ isActive }) =>
-                    `px-4 py-2 rounded-full font-black text-sm transition ${
+                    `px-5 py-2 rounded-full font-black text-sm transition ${
                       isActive
                         ? "bg-orange-600 text-white"
                         : "bg-black text-white hover:bg-orange-600"
@@ -129,7 +141,7 @@ export default function Navbar() {
                 <NavLink
                   to="/signup"
                   className={({ isActive }) =>
-                    `px-4 py-2 rounded-full font-black text-sm transition ${
+                    `px-5 py-2 rounded-full font-black text-sm transition ${
                       isActive
                         ? "bg-black text-white"
                         : "bg-orange-600 text-white hover:bg-black"
@@ -144,7 +156,7 @@ export default function Navbar() {
             <NavLink
               to="/cart"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-full font-black text-sm flex items-center gap-2 transition ${
+                `px-5 py-2 rounded-full font-black text-sm flex items-center gap-2 transition ${
                   isActive
                     ? "bg-black text-white"
                     : "bg-orange-600 text-white hover:bg-black"
@@ -154,14 +166,18 @@ export default function Navbar() {
               <ShoppingCart size={18} />
               Cart {cartItems.length}
             </NavLink>
+
           </div>
 
+          {/* MOBILE SECTION */}
+
           <div className="xl:hidden flex items-center gap-3">
+
             {user && <NotificationBell />}
 
             <NavLink
               to="/cart"
-              className="bg-orange-600 text-white px-3 py-2 rounded-full font-black flex items-center gap-1"
+              className="bg-orange-600 text-white px-4 py-2 rounded-full font-black flex items-center gap-2"
             >
               <ShoppingCart size={18} />
               {cartItems.length}
@@ -169,13 +185,16 @@ export default function Navbar() {
 
             <button
               onClick={() => setOpen(true)}
-              className="bg-black text-white w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition"
+              className="bg-black text-white w-11 h-11 rounded-full flex items-center justify-center"
             >
               <Menu />
             </button>
+
           </div>
         </div>
       </motion.nav>
+
+      {/* MOBILE DRAWER */}
 
       <AnimatePresence>
         {open && (
@@ -192,10 +211,11 @@ export default function Navbar() {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 220, damping: 25 }}
-              className="fixed right-0 top-0 h-full w-[85%] max-w-sm bg-white z-[70] p-6 shadow-2xl overflow-y-auto"
+              transition={{ type: "spring", stiffness: 250, damping: 25 }}
+              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white z-[70] shadow-2xl p-6 overflow-y-auto"
             >
-              <div className="flex justify-between items-center mb-8">
+
+              <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-black text-orange-600">
                   Adepa Market
                 </h2>
@@ -208,20 +228,33 @@ export default function Navbar() {
               {user && (
                 <div className="bg-orange-50 rounded-3xl p-5 mb-6">
                   <p className="font-black">Logged in as</p>
-                  <p className="text-gray-600 break-all">{user.email}</p>
+                  <p className="text-gray-600 break-all">
+                    {user.email}
+                  </p>
                 </div>
               )}
 
               <div className="grid gap-4 font-black">
-                <NavLink onClick={() => setOpen(false)} to="/" className={navClass}>
+
+                <NavLink
+                  onClick={() => setOpen(false)}
+                  to="/"
+                  className={navClass}
+                >
                   <span className="flex items-center gap-3">
-                    <Home size={20} /> Home
+                    <Home size={20} />
+                    Home
                   </span>
                 </NavLink>
 
-                <NavLink onClick={() => setOpen(false)} to="/shop" className={navClass}>
+                <NavLink
+                  onClick={() => setOpen(false)}
+                  to="/shop"
+                  className={navClass}
+                >
                   <span className="flex items-center gap-3">
-                    <Store size={20} /> Shop
+                    <Store size={20} />
+                    Shop
                   </span>
                 </NavLink>
 
@@ -231,13 +264,19 @@ export default function Navbar() {
                   className={navClass}
                 >
                   <span className="flex items-center gap-3">
-                    <Heart size={20} /> Wishlist ({wishlist.length})
+                    <Heart size={20} />
+                    Wishlist ({wishlist.length})
                   </span>
                 </NavLink>
 
-                <NavLink onClick={() => setOpen(false)} to="/cart" className={navClass}>
+                <NavLink
+                  onClick={() => setOpen(false)}
+                  to="/cart"
+                  className={navClass}
+                >
                   <span className="flex items-center gap-3">
-                    <ShoppingCart size={20} /> Cart ({cartItems.length})
+                    <ShoppingCart size={20} />
+                    Cart ({cartItems.length})
                   </span>
                 </NavLink>
 
@@ -247,27 +286,30 @@ export default function Navbar() {
                   className={navClass}
                 >
                   <span className="flex items-center gap-3">
-                    <Package size={20} /> My Orders
+                    <Package size={20} />
+                    My Orders
                   </span>
                 </NavLink>
 
                 <NavLink
                   onClick={() => setOpen(false)}
-                  to="/become-vendor"
+                  to="/vendor"
                   className={navClass}
                 >
                   <span className="flex items-center gap-3">
-                    <BriefcaseBusiness size={20} /> Sell on Adepa
+                    <BriefcaseBusiness size={20} />
+                    Sell on Adepa
                   </span>
                 </NavLink>
 
                 <NavLink
                   onClick={() => setOpen(false)}
-                  to="/vendor/dashboard"
+                  to="/vendor-dashboard"
                   className={navClass}
                 >
                   <span className="flex items-center gap-3">
-                    <Store size={20} /> Vendor Dashboard
+                    <Store size={20} />
+                    Vendor Dashboard
                   </span>
                 </NavLink>
 
@@ -277,7 +319,8 @@ export default function Navbar() {
                   className={navClass}
                 >
                   <span className="flex items-center gap-3">
-                    <Phone size={20} /> Contact
+                    <Phone size={20} />
+                    Contact
                   </span>
                 </NavLink>
 
@@ -286,9 +329,10 @@ export default function Navbar() {
                     <NavLink
                       onClick={() => setOpen(false)}
                       to="/account"
-                      className="flex items-center gap-3 bg-orange-600 text-white p-4 rounded-2xl"
+                      className="bg-orange-600 text-white p-4 rounded-2xl text-center flex items-center justify-center gap-3"
                     >
-                      <User size={20} /> My Account
+                      <User size={20} />
+                      Account
                     </NavLink>
 
                     <button
@@ -296,9 +340,10 @@ export default function Navbar() {
                         logout();
                         setOpen(false);
                       }}
-                      className="flex items-center gap-3 bg-black text-white p-4 rounded-2xl"
+                      className="bg-black text-white p-4 rounded-2xl flex items-center justify-center gap-3"
                     >
-                      <LogOut size={20} /> Logout
+                      <LogOut size={20} />
+                      Logout
                     </button>
                   </>
                 ) : (
@@ -320,6 +365,7 @@ export default function Navbar() {
                     </NavLink>
                   </>
                 )}
+
               </div>
             </motion.aside>
           </>
