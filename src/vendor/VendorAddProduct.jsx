@@ -9,8 +9,6 @@ import {
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import { db } from "../firebase/firebaseConfig";
 import { useAuth } from "../context/AuthContext";
 
@@ -44,7 +42,11 @@ export default function VendorAddProduct() {
   }, [user]);
 
   const fetchVendor = async () => {
-    const q = query(collection(db, "vendors"), where("userId", "==", user.uid));
+    const q = query(
+      collection(db, "vendors"),
+      where("userId", "==", user.uid)
+    );
+
     const snapshot = await getDocs(q);
 
     if (!snapshot.empty) {
@@ -64,6 +66,7 @@ export default function VendorAddProduct() {
 
   const uploadImages = async (files) => {
     const selectedFiles = Array.from(files || []);
+
     if (selectedFiles.length === 0) return;
 
     setUploading(true);
@@ -73,6 +76,7 @@ export default function VendorAddProduct() {
 
       for (let file of selectedFiles) {
         const data = new FormData();
+
         data.append("file", file);
         data.append("upload_preset", uploadPreset);
 
@@ -149,6 +153,7 @@ export default function VendorAddProduct() {
     try {
       await addDoc(collection(db, "products"), {
         ...product,
+
         price: Number(product.price),
         oldPrice: Number(product.oldPrice || 0),
         discount: Number(product.discount || 0),
@@ -190,86 +195,75 @@ export default function VendorAddProduct() {
 
   if (!vendor) {
     return (
-      <>
-        <Navbar />
+      <div className="w-full overflow-x-hidden">
+        <div className="bg-white rounded-[2rem] p-10 text-center shadow">
+          <h1 className="text-3xl font-black mb-4">
+            Vendor Application Required
+          </h1>
 
-        <main className="min-h-screen bg-slate-100 px-5 py-12">
-          <div className="max-w-3xl mx-auto bg-white rounded-[2rem] p-10 text-center">
-            <h1 className="text-3xl font-black mb-4">
-              Vendor Application Required
-            </h1>
-            <p className="text-gray-500">
-              Apply as a vendor before uploading products.
-            </p>
-          </div>
-        </main>
-
-        <Footer />
-      </>
+          <p className="text-gray-500">
+            Apply as a vendor before uploading products.
+          </p>
+        </div>
+      </div>
     );
   }
 
   if (vendor.status !== "Approved") {
     return (
-      <>
-        <Navbar />
+      <div className="w-full overflow-x-hidden">
+        <div className="bg-yellow-50 rounded-[2rem] p-10 text-center shadow">
+          <h1 className="text-3xl font-black mb-4">
+            Vendor Account Not Approved
+          </h1>
 
-        <main className="min-h-screen bg-slate-100 px-5 py-12">
-          <div className="max-w-3xl mx-auto bg-yellow-50 rounded-[2rem] p-10 text-center">
-            <h1 className="text-3xl font-black mb-4">
-              Vendor Account Not Approved
-            </h1>
-            <p className="text-gray-600">
-              Your current status is <strong>{vendor.status}</strong>. Admin
-              must approve your account before you can upload products.
-            </p>
-          </div>
-        </main>
-
-        <Footer />
-      </>
+          <p className="text-gray-600">
+            Your current status is <strong>{vendor.status}</strong>.
+            Admin must approve your account before you can upload
+            products.
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
-      <Navbar />
+    <div className="w-full overflow-x-hidden">
+      <form
+        onSubmit={addProduct}
+        className="bg-white rounded-[2rem] p-8 shadow-xl"
+      >
+        <p className="text-orange-600 font-black">
+          Vendor Product Upload
+        </p>
 
-      <main className="min-h-screen bg-slate-100 px-5 py-10">
-        <form
-          onSubmit={addProduct}
-          className="max-w-4xl mx-auto bg-white rounded-[2rem] p-8 shadow-xl"
-        >
-          <p className="text-orange-600 font-black">
-            Vendor Product Upload
-          </p>
+        <h1 className="text-4xl md:text-5xl font-black mt-2 mb-3">
+          Add Product
+        </h1>
 
-          <h1 className="text-4xl md:text-5xl font-black mt-2 mb-3">
-            Add Product
-          </h1>
+        <p className="text-gray-500 mb-8">
+          Shop: <strong>{vendor.shopName}</strong>
+        </p>
 
-          <p className="text-gray-500 mb-8">
-            Shop: <strong>{vendor.shopName}</strong>
-          </p>
+        <div className="grid gap-6">
+          <input
+            type="text"
+            name="name"
+            placeholder="Product Name"
+            value={product.name}
+            onChange={handleChange}
+            className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+            required
+          />
 
-          <div className="grid gap-6">
-            <input
-              type="text"
-              name="name"
-              placeholder="Product Name"
-              value={product.name}
-              onChange={handleChange}
-              className="border p-5 rounded-2xl"
-              required
-            />
-
+          <div className="grid md:grid-cols-3 gap-5">
             <input
               type="number"
               name="price"
               placeholder="Current Price"
               value={product.price}
               onChange={handleChange}
-              className="border p-5 rounded-2xl"
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
               required
             />
 
@@ -279,42 +273,44 @@ export default function VendorAddProduct() {
               placeholder="Old Price"
               value={product.oldPrice}
               onChange={handleChange}
-              className="border p-5 rounded-2xl"
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
             />
 
             <input
               type="number"
               name="discount"
-              placeholder="Discount Percentage"
+              placeholder="Discount %"
               value={product.discount}
               onChange={handleChange}
-              className="border p-5 rounded-2xl"
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
             />
+          </div>
 
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={product.category}
-              onChange={handleChange}
-              className="border p-5 rounded-2xl"
-              required
-            />
+          <input
+            type="text"
+            name="category"
+            placeholder="Category"
+            value={product.category}
+            onChange={handleChange}
+            className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+            required
+          />
 
-            <textarea
-              name="description"
-              placeholder="Product Description"
-              value={product.description}
-              onChange={handleChange}
-              className="border p-5 rounded-2xl h-40"
-              required
-            ></textarea>
+          <textarea
+            name="description"
+            placeholder="Product Description"
+            value={product.description}
+            onChange={handleChange}
+            className="border p-5 rounded-2xl h-40 outline-none focus:border-orange-500"
+            required
+          ></textarea>
 
+          <div className="grid md:grid-cols-2 gap-5">
             <select
               name="stock"
               value={product.stock}
               onChange={handleChange}
-              className="border p-5 rounded-2xl"
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
             >
               <option>In Stock</option>
               <option>Pre Order</option>
@@ -327,109 +323,111 @@ export default function VendorAddProduct() {
               placeholder="Supplier / Source"
               value={product.supplier}
               onChange={handleChange}
-              className="border p-5 rounded-2xl"
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
             />
+          </div>
 
-            <div className="grid md:grid-cols-2 gap-5">
-              <label className="flex items-center gap-3 font-bold bg-orange-50 p-5 rounded-3xl">
-                <input
-                  type="checkbox"
-                  checked={product.isFlashSale}
-                  onChange={(e) =>
-                    setProduct({
-                      ...product,
-                      isFlashSale: e.target.checked,
-                    })
-                  }
-                />
-                Flash Sale Product
-              </label>
-
-              <label className="flex items-center gap-3 font-bold bg-orange-50 p-5 rounded-3xl">
-                <input
-                  type="checkbox"
-                  checked={product.isFeatured}
-                  onChange={(e) =>
-                    setProduct({
-                      ...product,
-                      isFeatured: e.target.checked,
-                    })
-                  }
-                />
-                Featured Product
-              </label>
-            </div>
-
-            <label className="block border-2 border-dashed border-orange-300 rounded-[2rem] p-10 text-center bg-orange-50 cursor-pointer">
+          <div className="grid md:grid-cols-2 gap-5">
+            <label className="flex items-center gap-3 font-bold bg-orange-50 p-5 rounded-3xl">
               <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => uploadImages(e.target.files)}
-                className="hidden"
+                type="checkbox"
+                checked={product.isFlashSale}
+                onChange={(e) =>
+                  setProduct({
+                    ...product,
+                    isFlashSale: e.target.checked,
+                  })
+                }
               />
 
-              <p className="text-2xl font-black text-orange-600">
-                Click to Upload Images
-              </p>
-
-              <p className="mt-3 text-gray-500">
-                Select multiple product images
-              </p>
+              Flash Sale Product
             </label>
 
-            {uploading && (
-              <p className="font-black text-orange-600">Uploading images...</p>
-            )}
+            <label className="flex items-center gap-3 font-bold bg-orange-50 p-5 rounded-3xl">
+              <input
+                type="checkbox"
+                checked={product.isFeatured}
+                onChange={(e) =>
+                  setProduct({
+                    ...product,
+                    isFeatured: e.target.checked,
+                  })
+                }
+              />
 
-            {product.images.length > 0 && (
-              <div>
-                <p className="font-black text-orange-600 mb-4">
-                  {product.images.length} image(s) uploaded
-                </p>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                  {product.images.map((img, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={img}
-                        alt="Product preview"
-                        className="w-full h-40 object-cover rounded-2xl border"
-                      />
-
-                      <span className="absolute top-2 left-2 bg-black text-white text-sm px-3 py-1 rounded-full">
-                        {index + 1}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-600 text-white text-sm px-3 py-1 rounded-full font-bold"
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading || uploading}
-              className="bg-orange-600 hover:bg-black transition text-white py-5 rounded-full font-black"
-            >
-              {loading
-                ? "Uploading Product..."
-                : uploading
-                ? "Uploading Images..."
-                : "Add Product"}
-            </button>
+              Featured Product
+            </label>
           </div>
-        </form>
-      </main>
 
-      <Footer />
-    </>
+          <label className="block border-2 border-dashed border-orange-300 rounded-[2rem] p-10 text-center bg-orange-50 cursor-pointer hover:bg-orange-100 transition">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => uploadImages(e.target.files)}
+              className="hidden"
+            />
+
+            <p className="text-2xl font-black text-orange-600">
+              Click to Upload Images
+            </p>
+
+            <p className="mt-3 text-gray-500">
+              Select multiple product images
+            </p>
+          </label>
+
+          {uploading && (
+            <p className="font-black text-orange-600">
+              Uploading images...
+            </p>
+          )}
+
+          {product.images.length > 0 && (
+            <div>
+              <p className="font-black text-orange-600 mb-4">
+                {product.images.length} image(s) uploaded
+              </p>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                {product.images.map((img, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={img}
+                      alt="Product preview"
+                      className="w-full h-40 object-cover rounded-2xl border"
+                    />
+
+                    <span className="absolute top-2 left-2 bg-black text-white text-sm px-3 py-1 rounded-full">
+                      {index + 1}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 bg-red-600 text-white text-sm px-3 py-1 rounded-full font-bold"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || uploading}
+            className="bg-orange-600 hover:bg-black transition text-white py-5 rounded-full font-black text-lg"
+          >
+            {loading
+              ? "Uploading Product..."
+              : uploading
+              ? "Uploading Images..."
+              : "Add Product"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
