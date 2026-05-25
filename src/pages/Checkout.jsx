@@ -1,49 +1,29 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import PaystackPop from "@paystack/inline-js";
-import toast from "react-hot-toast";
-
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { db } from "../firebase/firebaseConfig";
-import { useCart } from "../context/CartContext";
+import { useContext, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { ShoppingBag, Truck, ShieldCheck } from "lucide-react";
+import PayButton from "../components/PaystackButton";
+import { CartContext } from "../context/CartContext";
 
 export default function Checkout() {
-  const navigate = useNavigate();
-  const { cartItems, totalPrice, clearCart } = useCart();
-
-  const deliveryOptions = {
-    Accra: 40,
-    Tema: 50,
-    Kasoa: 55,
-    Kumasi: 80,
-    Takoradi: 90,
-    Tamale: 120,
-    "Other Region": 100,
-  };
-
-  const [loading, setLoading] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
-  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const { cartItems, clearCart } = useContext(CartContext);
 
   const [customer, setCustomer] = useState({
     name: "",
     email: "",
     phone: "",
-    city: "Accra",
-    location: "",
+    city: "",
+    address: "",
   });
 
-  const deliveryFee = deliveryOptions[customer.city] || 100;
-  const finalTotal = totalPrice + deliveryFee - discount;
+  const subtotal = useMemo(() => {
+    return cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+  }, [cartItems]);
 
-  const coupons = {
-    ADEPA10: 10,
-    GHANA20: 20,
-    WELCOME5: 5,
-  };
+  const shipping = subtotal > 0 ? 25 : 0;
+  const grandTotal = subtotal + shipping;
 
   const handleChange = (e) => {
     setCustomer({
@@ -52,242 +32,219 @@ export default function Checkout() {
     });
   };
 
-  const applyCoupon = () => {
-    const code = couponCode.trim().toUpperCase();
+  const placeOrder = async (reference) => {
+    const order = {
+      customer,
+      items: cartItems,
+      paymentReference: reference.reference,
+      total: grandTotal,
+      createdAt: new Date().toISOString(),
+      status: "Paid",
+    };
 
-    if (!coupons[code]) {
-      toast.error("Invalid coupon code");
-      setDiscount(0);
-      setAppliedCoupon("");
-      return;
-    }
+    console.log("ORDER:", order);
 
-    const discountPercent = coupons[code];
-    const discountAmount = Math.round((totalPrice * discountPercent) / 100);
-
-    setDiscount(discountAmount);
-    setAppliedCoupon(code);
-
-    toast.success(`${discountPercent}% coupon applied`);
+    localStorage.setItem("lastOrder", JSON.stringify(order));
   };
 
-  const payWithPaystack = (e) => {
-    e.preventDefault();
+  if (cartItems.length === 0) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center px-5">
+        <div className="text-center">
+          <ShoppingBag size={80} className="mx-auto mb-5 text-orange-500" />
 
-    if (cartItems.length === 0) {
-      toast.error("Cart is empty");
-      return;
-    }
+          <h1 className="text-4xl font-black">Your Cart Is Empty</h1>
 
-    setLoading(true);
+          <p className="text-gray-400 mt-3">
+            Add some products before checkout.
+          </p>
 
-    const paystack = new PaystackPop();
-
-    paystack.newTransaction({
-      key: "pk_test_2b47193f4559fc4cb498e126a64e5bec923fe0b0",
-      email: customer.email,
-      amount: finalTotal * 100,
-      currency: "GHS",
-      firstname: customer.name,
-
-      onSuccess: async (transaction) => {
-        try {
-          const orderData = {
-            customer,
-            items: cartItems,
-            subtotal: totalPrice,
-            deliveryFee,
-            deliveryCity: customer.city,
-            discount,
-            coupon: appliedCoupon,
-            total: finalTotal,
-            paymentStatus: "Paid",
-            deliveryStatus: "Pending",
-            transactionReference: transaction.reference,
-            createdAt: serverTimestamp(),
-          };
-
-          await addDoc(collection(db, "orders"), orderData);
-
-          toast.success("Payment successful. Order saved.");
-          clearCart();
-
-          navigate("/order-success", {
-            state: {
-              order: {
-                ...orderData,
-                createdAt: new Date().toISOString(),
-              },
-            },
-          });
-        } catch (error) {
-          console.log(error);
-          toast.error("Payment done, but order was not saved.");
-        }
-
-        setLoading(false);
-      },
-
-      onCancel: () => {
-        toast.error("Payment cancelled");
-        setLoading(false);
-      },
-    });
-  };
+          <Link
+            to="/shop"
+            className="inline-block mt-6 bg-orange-600 px-8 py-4 rounded-full font-bold"
+          >
+            Go Shopping
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <>
-      <Navbar />
+    <main className="bg-[#f5f5f5] min-h-screen py-10 px-4">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
+        {/* LEFT */}
+        <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 shadow-xl">
+          <h1 className="text-4xl font-black mb-8">
+            Checkout
+          </h1>
 
-      <main className="max-w-6xl mx-auto px-5 py-12">
-        <h1 className="text-5xl font-black mb-10">Checkout</h1>
+          <div className="grid md:grid-cols-2 gap-5">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={customer.name}
+              onChange={handleChange}
+              className="border border-gray-200 rounded-2xl p-4 outline-none"
+            />
 
-        <div className="grid lg:grid-cols-2 gap-10">
-          <form
-            onSubmit={payWithPaystack}
-            className="bg-white rounded-3xl p-8 shadow-sm"
-          >
-            <h2 className="text-3xl font-black mb-6">Customer Details</h2>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={customer.email}
+              onChange={handleChange}
+              className="border border-gray-200 rounded-2xl p-4 outline-none"
+            />
 
-            <div className="grid gap-5">
-              <input
-                name="name"
-                value={customer.name}
-                onChange={handleChange}
-                className="border p-4 rounded-xl"
-                placeholder="Full Name"
-                required
-              />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={customer.phone}
+              onChange={handleChange}
+              className="border border-gray-200 rounded-2xl p-4 outline-none"
+            />
 
-              <input
-                name="email"
-                value={customer.email}
-                onChange={handleChange}
-                className="border p-4 rounded-xl"
-                placeholder="Email Address"
-                type="email"
-                required
-              />
+            <input
+              type="text"
+              name="city"
+              placeholder="City"
+              value={customer.city}
+              onChange={handleChange}
+              className="border border-gray-200 rounded-2xl p-4 outline-none"
+            />
+          </div>
 
-              <input
-                name="phone"
-                value={customer.phone}
-                onChange={handleChange}
-                className="border p-4 rounded-xl"
-                placeholder="Phone / WhatsApp Number"
-                required
-              />
+          <textarea
+            name="address"
+            placeholder="Delivery Address"
+            value={customer.address}
+            onChange={handleChange}
+            rows="5"
+            className="border border-gray-200 rounded-2xl p-4 outline-none mt-5 w-full"
+          />
 
-              <select
-                name="city"
-                value={customer.city}
-                onChange={handleChange}
-                className="border p-4 rounded-xl"
-                required
-              >
-                {Object.keys(deliveryOptions).map((city) => (
-                  <option key={city} value={city}>
-                    {city} — GH₵ {deliveryOptions[city]}
-                  </option>
-                ))}
-              </select>
-
-              <textarea
-                name="location"
-                value={customer.location}
-                onChange={handleChange}
-                className="border p-4 rounded-xl h-32"
-                placeholder="Detailed delivery address / GhanaPost GPS"
-                required
-              ></textarea>
-
-              <div className="bg-orange-50 rounded-2xl p-5">
-                <p className="font-black mb-3">Have a coupon?</p>
-
-                <div className="flex gap-3">
-                  <input
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    className="border p-4 rounded-xl flex-1"
-                    placeholder="Enter coupon code"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={applyCoupon}
-                    className="bg-black text-white px-5 rounded-xl font-black"
-                  >
-                    Apply
-                  </button>
-                </div>
-
-                {appliedCoupon && (
-                  <p className="text-green-600 font-bold mt-3">
-                    Coupon applied: {appliedCoupon}
-                  </p>
-                )}
-              </div>
-
-              <button
-                disabled={loading}
-                className="bg-orange-600 text-white py-4 rounded-full font-black"
-              >
-                {loading ? "Processing..." : `Pay GH₵ ${finalTotal}`}
-              </button>
-            </div>
-          </form>
-
-          <div className="bg-black text-white rounded-3xl p-8 h-fit">
-            <h2 className="text-3xl font-black mb-6">Order Summary</h2>
-
-            <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex justify-between gap-5">
-                  <span>
-                    {item.name} x {item.quantity}
-                  </span>
-                  <span>GH₵ {item.price * item.quantity}</span>
-                </div>
-              ))}
-
-              <hr className="border-gray-700" />
-
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>GH₵ {totalPrice}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span>Delivery to {customer.city}</span>
-                <span>GH₵ {deliveryFee}</span>
-              </div>
-
-              {discount > 0 && (
-                <div className="flex justify-between text-green-400">
-                  <span>Discount</span>
-                  <span>- GH₵ {discount}</span>
-                </div>
-              )}
-
-              <div className="flex justify-between text-2xl font-black pt-4">
-                <span>Total</span>
-                <span>GH₵ {finalTotal}</span>
-              </div>
+          {/* FEATURES */}
+          <div className="grid md:grid-cols-3 gap-4 mt-8">
+            <div className="bg-orange-50 rounded-2xl p-5">
+              <Truck className="text-orange-600 mb-3" />
+              <h3 className="font-black">Fast Delivery</h3>
+              <p className="text-sm text-gray-500">
+                Nationwide delivery across Ghana.
+              </p>
             </div>
 
-            <div className="mt-8 bg-white/10 rounded-2xl p-5">
-              <p className="font-black mb-2">Delivery Fees</p>
-              {Object.entries(deliveryOptions).map(([city, fee]) => (
-                <p key={city}>
-                  {city}: GH₵ {fee}
-                </p>
-              ))}
+            <div className="bg-orange-50 rounded-2xl p-5">
+              <ShieldCheck className="text-orange-600 mb-3" />
+              <h3 className="font-black">Secure Payment</h3>
+              <p className="text-sm text-gray-500">
+                MTN MoMo, Vodafone Cash & Cards.
+              </p>
+            </div>
+
+            <div className="bg-orange-50 rounded-2xl p-5">
+              <ShoppingBag className="text-orange-600 mb-3" />
+              <h3 className="font-black">Trusted Vendors</h3>
+              <p className="text-sm text-gray-500">
+                Verified marketplace sellers.
+              </p>
             </div>
           </div>
         </div>
-      </main>
 
-      <Footer />
-    </>
+        {/* RIGHT */}
+        <div className="bg-black text-white rounded-[2rem] p-8 shadow-2xl h-fit sticky top-10">
+          <h2 className="text-3xl font-black mb-8">
+            Order Summary
+          </h2>
+
+          <div className="space-y-5">
+            {cartItems.map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center border-b border-gray-800 pb-4"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-16 h-16 rounded-xl object-cover"
+                  />
+
+                  <div>
+                    <h3 className="font-bold">
+                      {item.name}
+                    </h3>
+
+                    <p className="text-gray-400 text-sm">
+                      Qty: {item.quantity}
+                    </p>
+                  </div>
+                </div>
+
+                <h3 className="font-black text-orange-500">
+                  GH₵ {(item.price * item.quantity).toFixed(2)}
+                </h3>
+              </div>
+            ))}
+          </div>
+
+          {/* TOTALS */}
+          <div className="mt-8 space-y-4">
+            <div className="flex justify-between text-gray-400">
+              <span>Subtotal</span>
+              <span>GH₵ {subtotal.toFixed(2)}</span>
+            </div>
+
+            <div className="flex justify-between text-gray-400">
+              <span>Delivery</span>
+              <span>GH₵ {shipping.toFixed(2)}</span>
+            </div>
+
+            <div className="flex justify-between text-2xl font-black border-t border-gray-700 pt-5">
+              <span>Total</span>
+              <span className="text-orange-500">
+                GH₵ {grandTotal.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* PAYSTACK */}
+          <PayButton
+            email={customer.email || "customer@adepamarket.com"}
+            amount={grandTotal}
+            metadata={{
+              custom_fields: [
+                {
+                  display_name: "Customer Name",
+                  variable_name: "customer_name",
+                  value: customer.name,
+                },
+                {
+                  display_name: "Phone",
+                  variable_name: "phone",
+                  value: customer.phone,
+                },
+              ],
+            }}
+            onSuccess={async (reference) => {
+              await placeOrder(reference);
+
+              clearCart();
+
+              alert("Payment Successful!");
+
+              window.location.href = "/success";
+            }}
+          />
+
+          <p className="text-center text-gray-500 text-sm mt-5">
+            Secure payments powered by Paystack
+          </p>
+        </div>
+      </div>
+    </main>
   );
 }
