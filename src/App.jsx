@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import "./App.css";
 
@@ -10,10 +11,12 @@ import VendorSignup from "./pages/VendorSignup";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
+import VendorStore from "./pages/VendorStore";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Wishlist from "./pages/Wishlist";
 import Success from "./pages/Success";
+import TrackOrder from "./pages/TrackOrder";
 
 /* ADMIN */
 import AdminLogin from "./admin/AdminLogin";
@@ -35,7 +38,6 @@ import VendorProducts from "./vendor/VendorProducts";
 import VendorEditProduct from "./vendor/VendorEditProduct";
 import VendorOrders from "./vendor/VendorOrders";
 import VendorEarnings from "./vendor/VendorEarnings";
-import VendorStore from "./pages/VendorStore";
 
 /* CONTEXT */
 import { AuthProvider } from "./context/AuthContext";
@@ -47,23 +49,23 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AdminRoute from "./components/AdminRoute";
 
-/* NOT FOUND */
+function StorePage({ children }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+}
+
 function NotFound() {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#000",
-        color: "#fff",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontSize: "40px",
-        fontWeight: "900",
-      }}
-    >
-      404 NOT FOUND
-    </div>
+    <StorePage>
+      <main className="min-h-screen bg-black text-white flex items-center justify-center px-5">
+        <h1 className="text-5xl font-black">404 NOT FOUND</h1>
+      </main>
+    </StorePage>
   );
 }
 
@@ -73,104 +75,24 @@ export default function App() {
       <WishlistProvider>
         <CartProvider>
           <BrowserRouter>
+            <Toaster position="top-right" />
+
             <Routes>
-              {/* MAIN WEBSITE */}
-              <Route
-                path="/"
-                element={
-                  <>
-                    <Navbar />
-                    <Home />
-                    <Footer />
-                  </>
-                }
-              />
+              <Route path="/" element={<StorePage><Home /></StorePage>} />
+              <Route path="/shop" element={<StorePage><Shop /></StorePage>} />
+              <Route path="/product/:id" element={<StorePage><ProductDetails /></StorePage>} />
+              <Route path="/vendor-store/:vendorId" element={<StorePage><VendorStore /></StorePage>} />
+              <Route path="/cart" element={<StorePage><Cart /></StorePage>} />
+              <Route path="/checkout" element={<StorePage><Checkout /></StorePage>} />
+              <Route path="/wishlist" element={<StorePage><Wishlist /></StorePage>} />
+              <Route path="/success" element={<StorePage><Success /></StorePage>} />
+              <Route path="/track-order" element={<StorePage><TrackOrder /></StorePage>} />
 
-              <Route
-                path="/shop"
-                element={
-                  <>
-                    <Navbar />
-                    <Shop />
-                    <Footer />
-                  </>
-                }
-              />
-
-              <Route
-                path="/product/:id"
-                element={
-                  <>
-                    <Navbar />
-                    <ProductDetails />
-                    <Footer />
-                  </>
-                }
-              />
-
-              <Route
-                path="/cart"
-                element={
-                  <>
-                    <Navbar />
-                    <Cart />
-                    <Footer />
-                  </>
-                }
-              />
-
-              <Route
-                path="/checkout"
-                element={
-                  <>
-                    <Navbar />
-                    <Checkout />
-                    <Footer />
-                  </>
-                }
-              />
-
-              <Route
-                path="/wishlist"
-                element={
-                  <>
-                    <Navbar />
-                    <Wishlist />
-                    <Footer />
-                  </>
-                }
-              />
-
-              <Route
-                path="/success"
-                element={
-                  <>
-                    <Navbar />
-                    <Success />
-                    <Footer />
-                  </>
-                }
-              />
-
-              <Route
-                path="/vendor-store/:vendorId"
-                element={
-                  <>
-                    <Navbar />
-                    <VendorStore />
-                    <Footer />
-                  </>
-                }
-              />
-
-              {/* AUTH */}
               <Route path="/signup" element={<Signup />} />
               <Route path="/vendor-signup" element={<VendorSignup />} />
 
-              {/* ADMIN LOGIN */}
               <Route path="/admin-login" element={<AdminLogin />} />
 
-              {/* ADMIN DASHBOARD */}
               <Route
                 path="/admin"
                 element={
@@ -182,36 +104,22 @@ export default function App() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="add-product" element={<AddProduct />} />
                 <Route path="edit-product/:id" element={<EditProduct />} />
-                <Route
-                  path="manage-products"
-                  element={<ManageProducts />}
-                />
+                <Route path="manage-products" element={<ManageProducts />} />
                 <Route path="orders" element={<Orders />} />
                 <Route path="vendors" element={<Vendors />} />
-                <Route
-                  path="vendor-payouts"
-                  element={<VendorPayouts />}
-                />
-                <Route
-                  path="send-notification"
-                  element={<SendNotification />}
-                />
+                <Route path="vendor-payouts" element={<VendorPayouts />} />
+                <Route path="send-notification" element={<SendNotification />} />
               </Route>
 
-              {/* VENDOR DASHBOARD */}
               <Route path="/vendor" element={<VendorLayout />}>
                 <Route index element={<VendorDashboard />} />
                 <Route path="add-product" element={<VendorAddProduct />} />
                 <Route path="products" element={<VendorProducts />} />
-                <Route
-                  path="edit-product/:id"
-                  element={<VendorEditProduct />}
-                />
+                <Route path="edit-product/:id" element={<VendorEditProduct />} />
                 <Route path="orders" element={<VendorOrders />} />
                 <Route path="earnings" element={<VendorEarnings />} />
               </Route>
 
-              {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
