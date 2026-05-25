@@ -1,204 +1,97 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+// CONTEXTS
+import { CartProvider } from "./context/CartContext";
+import { WishlistProvider } from "./context/WishlistContext";
+import { AuthProvider } from "./context/AuthContext";
 
+// PAGES
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
-import Wishlist from "./pages/Wishlist";
 import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Account from "./pages/Account";
+import Wishlist from "./pages/Wishlist";
 import Contact from "./pages/Contact";
-import VendorSignup from "./pages/VendorSignup";
 import MyOrders from "./pages/MyOrders";
+import TrackOrder from "./pages/TrackOrder";
 import ProductDetails from "./pages/ProductDetails";
+import Success from "./pages/Success";
 import OrderSuccess from "./pages/OrderSuccess";
+import VendorSignup from "./pages/VendorSignup";
+import VendorStore from "./pages/VendorStore";
 import NotFound from "./pages/NotFound";
 
-import AdminLayout from "./admin/AdminLayout";
+// ADMIN
 import AdminDashboard from "./admin/AdminDashboard";
 import AddProduct from "./admin/AddProduct";
+import EditProduct from "./admin/EditProduct";
 import ManageProducts from "./admin/ManageProducts";
 import Orders from "./admin/Orders";
 import Vendors from "./admin/Vendors";
 import VendorPayouts from "./admin/VendorPayouts";
 
+// VENDOR
 import VendorLayout from "./vendor/VendorLayout";
-import VendorStore from "./vendor/VendorStore";
+import VendorDashboard from "./vendor/VendorDashboard";
+import VendorProducts from "./vendor/VendorProducts";
+import VendorAddProduct from "./vendor/VendorAddProduct";
+import VendorEditProduct from "./vendor/VendorEditProduct";
 import VendorOrders from "./vendor/VendorOrders";
 import VendorEarnings from "./vendor/VendorEarnings";
 
-function StorePage({ children }) {
-  return (
-    <>
-      <Navbar />
-      {children}
-      <Footer />
-    </>
-  );
-}
-
 export default function App() {
   return (
-    <BrowserRouter>
-      <Toaster position="top-right" />
+    <AuthProvider>
+      <WishlistProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/orders" element={<MyOrders />} />
+              <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/track-order" element={<TrackOrder />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
 
-      <Routes>
+              <Route path="/vendor" element={<VendorSignup />} />
+              <Route path="/vendor-signup" element={<VendorSignup />} />
+              <Route path="/vendor-store" element={<VendorStore />} />
+              <Route path="/vendor-store/:vendorId" element={<VendorStore />} />
 
-        {/* STORE ROUTES */}
+              <Route path="/vendor-dashboard" element={<VendorLayout />}>
+                <Route index element={<VendorDashboard />} />
+                <Route path="products" element={<VendorProducts />} />
+                <Route path="add-product" element={<VendorAddProduct />} />
+                <Route path="edit-product/:id" element={<VendorEditProduct />} />
+                <Route path="orders" element={<VendorOrders />} />
+                <Route path="earnings" element={<VendorEarnings />} />
+              </Route>
 
-        <Route
-          path="/"
-          element={
-            <StorePage>
-              <Home />
-            </StorePage>
-          }
-        />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/add-product" element={<AddProduct />} />
+              <Route path="/admin/edit-product/:id" element={<EditProduct />} />
+              <Route path="/admin/manage-products" element={<ManageProducts />} />
+              <Route path="/admin/orders" element={<Orders />} />
+              <Route path="/admin/vendors" element={<Vendors />} />
+              <Route path="/admin/vendor-payouts" element={<VendorPayouts />} />
 
-        <Route
-          path="/shop"
-          element={
-            <StorePage>
-              <Shop />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/cart"
-          element={
-            <StorePage>
-              <Cart />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/wishlist"
-          element={
-            <StorePage>
-              <Wishlist />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/checkout"
-          element={
-            <StorePage>
-              <Checkout />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/login"
-          element={
-            <StorePage>
-              <Login />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/signup"
-          element={
-            <StorePage>
-              <Signup />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/account"
-          element={
-            <StorePage>
-              <Account />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/contact"
-          element={
-            <StorePage>
-              <Contact />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/vendor"
-          element={
-            <StorePage>
-              <VendorSignup />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/my-orders"
-          element={
-            <StorePage>
-              <MyOrders />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/product/:id"
-          element={
-            <StorePage>
-              <ProductDetails />
-            </StorePage>
-          }
-        />
-
-        <Route
-          path="/success"
-          element={
-            <StorePage>
-              <OrderSuccess />
-            </StorePage>
-          }
-        />
-
-        {/* ADMIN ROUTES */}
-
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="add-product" element={<AddProduct />} />
-          <Route path="manage-products" element={<ManageProducts />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="vendors" element={<Vendors />} />
-          <Route path="payouts" element={<VendorPayouts />} />
-        </Route>
-
-        {/* VENDOR ROUTES */}
-
-        <Route path="/vendor-dashboard" element={<VendorLayout />}>
-          <Route index element={<VendorStore />} />
-          <Route path="orders" element={<VendorOrders />} />
-          <Route path="earnings" element={<VendorEarnings />} />
-        </Route>
-
-        {/* 404 */}
-
-        <Route
-          path="*"
-          element={
-            <StorePage>
-              <NotFound />
-            </StorePage>
-          }
-        />
-
-      </Routes>
-    </BrowserRouter>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </WishlistProvider>
+    </AuthProvider>
   );
 }
