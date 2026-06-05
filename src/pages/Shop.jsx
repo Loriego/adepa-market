@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import {
   Search,
@@ -6,6 +6,9 @@ import {
   Store,
   Flame,
   RotateCcw,
+  Tags,
+  ShoppingBag,
+  BadgePercent,
 } from "lucide-react";
 
 import Navbar from "../components/Navbar";
@@ -37,19 +40,23 @@ export default function Shop() {
     setProducts(productList);
   };
 
-  const categories = [
-    "All",
-    ...new Set(products.map((item) => item.category).filter(Boolean)),
-  ];
+  const categories = useMemo(() => {
+    return [
+      "All",
+      ...new Set(products.map((item) => item.category).filter(Boolean)),
+    ];
+  }, [products]);
 
-  const vendors = [
-    "All",
-    ...new Set(
-      products
-        .map((item) => item.vendorShopName)
-        .filter(Boolean)
-    ),
-  ];
+  const vendors = useMemo(() => {
+    return [
+      "All",
+      ...new Set(products.map((item) => item.vendorShopName).filter(Boolean)),
+    ];
+  }, [products]);
+
+  const flashProducts = products.filter(
+    (item) => item.isFlashSale || Number(item.discount) > 0
+  ).length;
 
   const filteredProducts = products
     .filter((product) => {
@@ -72,9 +79,23 @@ export default function Shop() {
       flashOnly ? product.isFlashSale || Number(product.discount) > 0 : true
     )
     .sort((a, b) => {
-      if (sort === "Low to High") return Number(a.price) - Number(b.price);
-      if (sort === "High to Low") return Number(b.price) - Number(a.price);
-      if (sort === "Discount") return Number(b.discount || 0) - Number(a.discount || 0);
+      if (sort === "Price Low → High") {
+        return Number(a.price) - Number(b.price);
+      }
+
+      if (sort === "Price High → Low") {
+        return Number(b.price) - Number(a.price);
+      }
+
+      if (sort === "Highest Discount") {
+        return Number(b.discount || 0) - Number(a.discount || 0);
+      }
+
+      if (sort === "Flash Sale First") {
+        return Number(b.isFlashSale || Number(b.discount) > 0) -
+          Number(a.isFlashSale || Number(a.discount) > 0);
+      }
+
       return 0;
     });
 
@@ -90,16 +111,18 @@ export default function Shop() {
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-slate-100">
-        <section className="bg-black text-white py-20">
+      <main className="min-h-screen bg-slate-100 overflow-x-hidden">
+        <section className="bg-black text-white py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-5">
-            <p className="text-orange-500 font-black">ADEPA MARKETPLACE</p>
+            <p className="text-orange-500 font-black tracking-wide">
+              ADEPA MARKETPLACE
+            </p>
 
             <h1 className="text-5xl md:text-7xl font-black mt-3">
               Shop Products
             </h1>
 
-            <p className="text-gray-300 mt-5 max-w-2xl">
+            <p className="text-gray-300 mt-5 max-w-2xl text-lg">
               Search products by name, category, vendor shop, flash sales and
               best deals across Adepa Market.
             </p>
@@ -120,22 +143,14 @@ export default function Shop() {
             </div>
 
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="border p-5 rounded-2xl outline-none focus:border-orange-600"
-            >
-              {categories.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
-
-            <select
               value={vendor}
               onChange={(e) => setVendor(e.target.value)}
               className="border p-5 rounded-2xl outline-none focus:border-orange-600"
             >
               {vendors.map((item) => (
-                <option key={item}>{item}</option>
+                <option key={item} value={item}>
+                  {item === "All" ? "All Vendors" : item}
+                </option>
               ))}
             </select>
 
@@ -145,10 +160,35 @@ export default function Shop() {
               className="border p-5 rounded-2xl outline-none focus:border-orange-600"
             >
               <option>Newest</option>
-              <option>Low to High</option>
-              <option>High to Low</option>
-              <option>Discount</option>
+              <option>Price Low → High</option>
+              <option>Price High → Low</option>
+              <option>Highest Discount</option>
+              <option>Flash Sale First</option>
             </select>
+
+            <button
+              onClick={resetFilters}
+              className="bg-black text-white rounded-2xl p-5 font-black flex items-center justify-center gap-2 active:scale-95 transition"
+            >
+              <RotateCcw size={20} />
+              Reset Filters
+            </button>
+
+            <div className="md:col-span-5 flex flex-wrap gap-3 pt-2">
+              {categories.map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setCategory(item)}
+                  className={`px-5 py-3 rounded-full font-black transition ${
+                    category === item
+                      ? "bg-orange-600 text-white shadow"
+                      : "bg-slate-100 text-slate-700 hover:bg-orange-100"
+                  }`}
+                >
+                  {item === "All" ? "All Categories" : item}
+                </button>
+              ))}
+            </div>
 
             <label className="md:col-span-2 bg-orange-50 rounded-2xl p-5 flex items-center gap-3 font-black cursor-pointer">
               <input
@@ -160,26 +200,27 @@ export default function Shop() {
               Show Deals / Flash Sales Only
             </label>
 
-            <button
-              onClick={resetFilters}
-              className="bg-black text-white rounded-2xl p-5 font-black flex items-center justify-center gap-2 active:scale-95 transition"
-            >
-              <RotateCcw size={20} />
-              Reset Filters
-            </button>
+            <div className="bg-red-50 text-red-600 rounded-2xl p-5 font-black flex items-center gap-2">
+              <BadgePercent size={20} />
+              {flashProducts} Flash Deals
+            </div>
 
             <div className="md:col-span-2 bg-slate-50 rounded-2xl p-5 flex flex-wrap gap-3 items-center">
               <span className="font-black flex items-center gap-2">
                 <Store size={18} />
-                Marketplace Filters:
+                Active Filters:
               </span>
 
               <span className="bg-white px-4 py-2 rounded-full font-bold">
-                {category}
+                {category === "All" ? "All Categories" : category}
               </span>
 
               <span className="bg-white px-4 py-2 rounded-full font-bold">
-                {vendor}
+                {vendor === "All" ? "All Vendors" : vendor}
+              </span>
+
+              <span className="bg-white px-4 py-2 rounded-full font-bold">
+                {sort}
               </span>
 
               {flashOnly && (
@@ -191,18 +232,44 @@ export default function Shop() {
           </div>
         </section>
 
-        <section className="max-w-7xl mx-auto px-5 py-16">
+        <section className="max-w-7xl mx-auto px-5 py-10">
+          <div className="grid sm:grid-cols-3 gap-5 mb-10">
+            <div className="bg-white rounded-3xl p-6 shadow-sm">
+              <ShoppingBag className="text-orange-600 mb-3" />
+
+              <p className="text-gray-500 font-bold">Total Products</p>
+
+              <h3 className="text-3xl font-black">{products.length}</h3>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 shadow-sm">
+              <Store className="text-orange-600 mb-3" />
+
+              <p className="text-gray-500 font-bold">Vendor Stores</p>
+
+              <h3 className="text-3xl font-black">{vendors.length - 1}</h3>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 shadow-sm">
+              <Tags className="text-orange-600 mb-3" />
+
+              <p className="text-gray-500 font-bold">Categories</p>
+
+              <h3 className="text-3xl font-black">{categories.length - 1}</h3>
+            </div>
+          </div>
+
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
             <div className="flex items-center gap-3">
               <SlidersHorizontal className="text-orange-600" />
 
               <h2 className="text-3xl font-black">
-                {filteredProducts.length} Product(s) Found
+                Showing {filteredProducts.length} of {products.length} Products
               </h2>
             </div>
 
             <p className="text-gray-500 font-bold">
-              Showing marketplace products from all approved sellers.
+              Marketplace products from approved sellers.
             </p>
           </div>
 
@@ -224,7 +291,7 @@ export default function Shop() {
               </button>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
