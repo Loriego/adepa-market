@@ -71,8 +71,7 @@ export default function App() {
               <Route path="/vendor" element={<VendorSignup />} />
               <Route path="/sell" element={<VendorSignup />} />
               <Route path="/vendor-signup" element={<VendorSignup />} />
-              <Route path="/vendor-store" element={<VendorStore />} />
-
+<Route path="/vendor-store/:vendorId" element={<VendorStore />} />
               <Route
                 path="/vendor-dashboard"
                 element={<VendorLayout />}

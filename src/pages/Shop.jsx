@@ -20,10 +20,16 @@ export default function Shop() {
   const [products, setProducts] = useState([]);
 
   const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
   const [category, setCategory] = useState("All");
   const [vendor, setVendor] = useState("All");
   const [sort, setSort] = useState("Newest");
   const [flashOnly, setFlashOnly] = useState(false);
+
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [discountOnly, setDiscountOnly] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -58,6 +64,40 @@ export default function Shop() {
     (item) => item.isFlashSale || Number(item.discount) > 0
   ).length;
 
+  const sponsoredProducts = products.filter(
+    (item) => item.sponsored === true
+  ).length;
+
+  const handleSearch = (value) => {
+    setSearch(value);
+
+    if (!value.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    const matches = products
+      .filter((product) => {
+        const text = `
+          ${product.name || ""}
+          ${product.category || ""}
+          ${product.vendorShopName || ""}
+        `.toLowerCase();
+
+        return text.includes(value.toLowerCase());
+      })
+      .slice(0, 6);
+
+    setSuggestions(matches);
+  };
+
+  const chooseSuggestion = (product) => {
+    setSearch(product.name || "");
+    setCategory("All");
+    setVendor("All");
+    setSuggestions([]);
+  };
+
   const filteredProducts = products
     .filter((product) => {
       const searchable = `
@@ -78,22 +118,31 @@ export default function Shop() {
     .filter((product) =>
       flashOnly ? product.isFlashSale || Number(product.discount) > 0 : true
     )
+    .filter((product) =>
+      minPrice ? Number(product.price) >= Number(minPrice) : true
+    )
+    .filter((product) =>
+      maxPrice ? Number(product.price) <= Number(maxPrice) : true
+    )
+    .filter((product) =>
+      discountOnly ? Number(product.discount) > 0 : true
+    )
     .sort((a, b) => {
-      if (sort === "Price Low → High") {
-        return Number(a.price) - Number(b.price);
-      }
+      if (a.sponsored && !b.sponsored) return -1;
+      if (!a.sponsored && b.sponsored) return 1;
 
-      if (sort === "Price High → Low") {
-        return Number(b.price) - Number(a.price);
-      }
+      if (sort === "Price Low → High") return Number(a.price) - Number(b.price);
+      if (sort === "Price High → Low") return Number(b.price) - Number(a.price);
 
       if (sort === "Highest Discount") {
         return Number(b.discount || 0) - Number(a.discount || 0);
       }
 
       if (sort === "Flash Sale First") {
-        return Number(b.isFlashSale || Number(b.discount) > 0) -
-          Number(a.isFlashSale || Number(a.discount) > 0);
+        return (
+          Number(b.isFlashSale || Number(b.discount) > 0) -
+          Number(a.isFlashSale || Number(a.discount) > 0)
+        );
       }
 
       return 0;
@@ -101,10 +150,14 @@ export default function Shop() {
 
   const resetFilters = () => {
     setSearch("");
+    setSuggestions([]);
     setCategory("All");
     setVendor("All");
     setSort("Newest");
     setFlashOnly(false);
+    setMinPrice("");
+    setMaxPrice("");
+    setDiscountOnly(false);
   };
 
   return (
@@ -136,10 +189,43 @@ export default function Shop() {
 
               <input
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
+                onFocus={() => {
+                  if (search.trim()) handleSearch(search);
+                }}
                 placeholder="Search products, categories or vendors..."
                 className="w-full border p-5 pl-14 rounded-2xl outline-none focus:border-orange-600"
               />
+
+              {suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-white border rounded-2xl shadow-xl mt-2 z-[9999] overflow-hidden">
+                  {suggestions.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => chooseSuggestion(item)}
+                      className="w-full text-left px-5 py-4 hover:bg-orange-50 transition border-b last:border-none flex items-center gap-4"
+                    >
+                      <img
+                        src={
+                          item.image ||
+                          item.images?.[0] ||
+                          "https://via.placeholder.com/80"
+                        }
+                        alt={item.name}
+                        className="w-12 h-12 object-cover rounded-xl bg-slate-100"
+                      />
+
+                      <div className="min-w-0">
+                        <p className="font-black truncate">{item.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {item.category || "Product"} • GH₵ {item.price}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <select
@@ -190,6 +276,33 @@ export default function Shop() {
               ))}
             </div>
 
+            <div className="md:col-span-5 grid md:grid-cols-3 gap-4">
+              <input
+                type="number"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                placeholder="Minimum Price"
+                className="border p-4 rounded-2xl outline-none focus:border-orange-600"
+              />
+
+              <input
+                type="number"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="Maximum Price"
+                className="border p-4 rounded-2xl outline-none focus:border-orange-600"
+              />
+
+              <label className="bg-orange-50 rounded-2xl p-4 flex items-center gap-3 font-black cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={discountOnly}
+                  onChange={(e) => setDiscountOnly(e.target.checked)}
+                />
+                Discounted Products Only
+              </label>
+            </div>
+
             <label className="md:col-span-2 bg-orange-50 rounded-2xl p-5 flex items-center gap-3 font-black cursor-pointer">
               <input
                 type="checkbox"
@@ -205,7 +318,11 @@ export default function Shop() {
               {flashProducts} Flash Deals
             </div>
 
-            <div className="md:col-span-2 bg-slate-50 rounded-2xl p-5 flex flex-wrap gap-3 items-center">
+            <div className="bg-yellow-50 text-yellow-700 rounded-2xl p-5 font-black flex items-center gap-2">
+              👑 {sponsoredProducts} Sponsored
+            </div>
+
+            <div className="md:col-span-5 bg-slate-50 rounded-2xl p-5 flex flex-wrap gap-3 items-center">
               <span className="font-black flex items-center gap-2">
                 <Store size={18} />
                 Active Filters:
@@ -228,57 +345,72 @@ export default function Shop() {
                   Deals Only
                 </span>
               )}
+
+              {discountOnly && (
+                <span className="bg-orange-600 text-white px-4 py-2 rounded-full font-bold">
+                  Discount Only
+                </span>
+              )}
+
+              {minPrice && (
+                <span className="bg-white px-4 py-2 rounded-full font-bold">
+                  Min: GH₵ {minPrice}
+                </span>
+              )}
+
+              {maxPrice && (
+                <span className="bg-white px-4 py-2 rounded-full font-bold">
+                  Max: GH₵ {maxPrice}
+                </span>
+              )}
             </div>
           </div>
         </section>
 
         <section className="max-w-7xl mx-auto px-5 py-10">
-          <div className="grid sm:grid-cols-3 gap-5 mb-10">
+          <div className="grid sm:grid-cols-4 gap-5 mb-10">
             <div className="bg-white rounded-3xl p-6 shadow-sm">
               <ShoppingBag className="text-orange-600 mb-3" />
-
               <p className="text-gray-500 font-bold">Total Products</p>
-
               <h3 className="text-3xl font-black">{products.length}</h3>
             </div>
 
             <div className="bg-white rounded-3xl p-6 shadow-sm">
               <Store className="text-orange-600 mb-3" />
-
               <p className="text-gray-500 font-bold">Vendor Stores</p>
-
               <h3 className="text-3xl font-black">{vendors.length - 1}</h3>
             </div>
 
             <div className="bg-white rounded-3xl p-6 shadow-sm">
               <Tags className="text-orange-600 mb-3" />
-
               <p className="text-gray-500 font-bold">Categories</p>
-
               <h3 className="text-3xl font-black">{categories.length - 1}</h3>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 shadow-sm">
+              <BadgePercent className="text-yellow-500 mb-3" />
+              <p className="text-gray-500 font-bold">Sponsored</p>
+              <h3 className="text-3xl font-black">{sponsoredProducts}</h3>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
             <div className="flex items-center gap-3">
               <SlidersHorizontal className="text-orange-600" />
-
               <h2 className="text-3xl font-black">
                 Showing {filteredProducts.length} of {products.length} Products
               </h2>
             </div>
 
             <p className="text-gray-500 font-bold">
-              Marketplace products from approved sellers.
+              Sponsored products appear first.
             </p>
           </div>
 
           {filteredProducts.length === 0 ? (
             <div className="bg-white rounded-[2rem] p-10 text-center">
               <Search className="mx-auto text-orange-600 mb-4" size={60} />
-
               <h2 className="text-2xl font-black">No products found</h2>
-
               <p className="text-gray-500 mt-2">
                 Try another search, vendor, category or reset filters.
               </p>

@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+import { RecentlyViewedProvider } from "./context/RecentlyViewedContext";
+
 // REMOVE OLD SERVICE WORKERS IN DEV
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations().then((registrations) => {
@@ -14,6 +16,8 @@ if ("serviceWorker" in navigator) {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <RecentlyViewedProvider>
+      <App />
+    </RecentlyViewedProvider>
   </React.StrictMode>
 );

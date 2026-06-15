@@ -46,7 +46,7 @@ export default function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="relative bg-slate-100 w-11 h-11 rounded-full flex items-center justify-center"
+        className="relative bg-slate-100 w-11 h-11 rounded-full flex items-center justify-center hover:bg-orange-50 transition"
       >
         <Bell size={20} />
 
@@ -60,25 +60,56 @@ export default function NotificationBell() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            initial={{ opacity: 0, y: 10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 15, scale: 0.95 }}
-            className="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-2xl p-5 z-[100]"
+            exit={{ opacity: 0, y: 10, scale: 0.97 }}
+            transition={{ duration: 0.2 }}
+            className="
+              absolute
+              top-full
+              right-0
+              mt-3
+              w-80
+              bg-white
+              rounded-3xl
+              shadow-2xl
+              border
+              border-slate-100
+              p-5
+              z-40
+            "
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-black text-xl">Live Alerts</h3>
+              <h3 className="font-black text-xl">
+                Live Alerts
+              </h3>
 
-              <button onClick={() => setOpen(false)}>
+              <button
+                onClick={() => setOpen(false)}
+                className="hover:text-red-600 transition"
+              >
                 <X size={20} />
               </button>
             </div>
 
             {notifications.length === 0 ? (
-              <p className="text-gray-500">No alerts yet.</p>
+              <div className="text-center py-6">
+                <Bell
+                  size={40}
+                  className="mx-auto text-gray-300 mb-3"
+                />
+
+                <p className="text-gray-500 font-medium">
+                  No alerts yet.
+                </p>
+              </div>
             ) : (
               <div className="grid gap-3 max-h-96 overflow-y-auto">
                 {notifications.map((item) => (
-                  <div key={item.id} className="bg-slate-50 rounded-2xl p-4">
+                  <div
+                    key={item.id}
+                    className="bg-slate-50 rounded-2xl p-4 hover:bg-orange-50 transition"
+                  >
                     <div className="flex gap-3">
                       <div className="bg-orange-100 text-orange-600 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
                         {item.status === "Delivered" ? (
@@ -89,9 +120,11 @@ export default function NotificationBell() {
                       </div>
 
                       <div>
-                        <p className="font-black">{item.title}</p>
+                        <p className="font-black">
+                          {item.title}
+                        </p>
 
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 mt-1">
                           {item.message}
                         </p>
 

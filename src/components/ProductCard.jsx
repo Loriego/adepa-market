@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Flame, Heart, Eye, Store } from "lucide-react";
+import { Flame, Heart, Eye, Store, Crown } from "lucide-react";
 
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -21,6 +21,13 @@ export default function ProductCard({ product }) {
         className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition relative group w-full"
       >
         <div className="absolute top-3 left-3 z-10 flex gap-2 flex-wrap">
+          {product.sponsored && (
+            <span className="bg-yellow-500 text-black px-2.5 py-1 rounded-full text-[11px] font-black flex items-center gap-1">
+              <Crown size={12} />
+              Sponsored
+            </span>
+          )}
+
           {product.isFlashSale && (
             <span className="bg-red-600 text-white px-2.5 py-1 rounded-full text-[11px] font-black flex items-center gap-1">
               <Flame size={12} />
@@ -54,7 +61,7 @@ export default function ProductCard({ product }) {
         <Link to={`/product/${product.id}`}>
           <div className="bg-white h-48 flex items-center justify-center overflow-hidden p-4">
             <img
-              src={product.image}
+              src={product.image || product.images?.[0]}
               alt={product.name}
               className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-500"
             />

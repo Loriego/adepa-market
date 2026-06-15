@@ -30,17 +30,19 @@ import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import ReviewSection from "../components/ReviewSection";
 import SmartRecommendations from "../components/SmartRecommendations";
+import RecentlyViewedSection from "../components/RecentlyViewedSection";
 
 import { db } from "../firebase/firebaseConfig";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-
+import { useRecentlyViewed } from "../context/RecentlyViewedContext";
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { addToCart } = useCart();
   const { addToWishlist } = useWishlist();
+  const { addRecentlyViewed } = useRecentlyViewed();
 
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
@@ -63,10 +65,13 @@ export default function ProductDetails() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setProduct({
+        const productData = {
           id: docSnap.id,
           ...docSnap.data(),
-        });
+        };
+
+        setProduct(productData);
+        addRecentlyViewed(productData);
       }
     } catch (error) {
       console.log(error);
@@ -94,13 +99,11 @@ export default function ProductDetails() {
     return (
       <>
         <Navbar />
-
         <main className="min-h-screen bg-slate-100 flex items-center justify-center">
           <div className="bg-white rounded-[2rem] p-10 shadow text-center">
             <h1 className="text-3xl font-black">Loading product...</h1>
           </div>
         </main>
-
         <Footer />
       </>
     );
@@ -110,7 +113,6 @@ export default function ProductDetails() {
     return (
       <>
         <Navbar />
-
         <main className="min-h-screen bg-slate-100 flex flex-col items-center justify-center px-5 text-center">
           <div className="bg-white rounded-[2rem] p-10 shadow">
             <h1 className="text-3xl font-black mb-5">Product not found</h1>
@@ -123,7 +125,6 @@ export default function ProductDetails() {
             </Link>
           </div>
         </main>
-
         <Footer />
       </>
     );
@@ -270,9 +271,7 @@ Total: GH₵ ${price * quantity}`;
 
                 <span className="font-black">4.8</span>
 
-                <span className="text-gray-500 font-bold">
-                  128 Reviews
-                </span>
+                <span className="text-gray-500 font-bold">128 Reviews</span>
               </div>
 
               {product.vendorId && (
@@ -329,9 +328,7 @@ Total: GH₵ ${price * quantity}`;
               </p>
 
               <div className="mt-6 bg-slate-50 rounded-3xl p-6">
-                <h3 className="text-xl font-black mb-4">
-                  Product Details
-                </h3>
+                <h3 className="text-xl font-black mb-4">Product Details</h3>
 
                 <div className="grid md:grid-cols-2 gap-4 text-gray-600">
                   <p>
@@ -465,9 +462,7 @@ Total: GH₵ ${price * quantity}`;
           <div className="mb-8">
             <p className="text-orange-600 font-black">You may also like</p>
 
-            <h2 className="text-4xl font-black mt-2">
-              Related Products
-            </h2>
+            <h2 className="text-4xl font-black mt-2">Related Products</h2>
           </div>
 
           {related.length === 0 ? (
@@ -486,6 +481,8 @@ Total: GH₵ ${price * quantity}`;
         </section>
 
         <ReviewSection productId={product.id} />
+
+        <RecentlyViewedSection />
 
         <SmartRecommendations currentProduct={product} />
       </main>

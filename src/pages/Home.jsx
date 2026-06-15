@@ -1,10 +1,24 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-import Hero from "../components/Hero";
+import HeroSlider from "../components/HeroSlider";
+
+import Categories from "../components/Categories";
+import MarketplaceStats from "../components/MarketplaceStats";
+
 import FlashSale from "../components/FlashSale";
+import SponsoredProducts from "../components/SponsoredProducts";
+
 import FeaturedProducts from "../components/FeaturedProducts";
+
+import FeaturedVendors from "../components/FeaturedVendors";
+
+import CustomerReviews from "../components/CustomerReviews";
+import TrustSection from "../components/TrustSection";
+
 import TrendingProducts from "../components/TrendingProducts";
+
+import BecomeVendor from "../components/BecomeVendor";
 
 export default function Home() {
   return (
@@ -12,10 +26,27 @@ export default function Home() {
       <Navbar />
 
       <main>
-        <Hero />
+        <HeroSlider />
+
+        <Categories />
+
+        <MarketplaceStats />
+
         <FlashSale />
+
+        <SponsoredProducts />
+
         <FeaturedProducts />
+
+        <FeaturedVendors />
+
+        <CustomerReviews />
+
+        <TrustSection />
+
         <TrendingProducts />
+
+        <BecomeVendor />
       </main>
 
       <Footer />
