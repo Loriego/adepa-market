@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   collection,
   onSnapshot,
@@ -15,7 +15,6 @@ export default function VendorPayouts() {
   const commissionRate = 0.1;
 
   const [orders, setOrders] = useState([]);
-  const [vendorGroups, setVendorGroups] = useState([]);
 
   useEffect(() => {
     const q = query(collection(db, "orders"));
@@ -32,7 +31,7 @@ export default function VendorPayouts() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
+  const vendorGroups = useMemo(() => {
     const groups = {};
 
     orders.forEach((order) => {
@@ -82,7 +81,7 @@ export default function VendorPayouts() {
       });
     });
 
-    setVendorGroups(Object.values(groups));
+    return Object.values(groups);
   }, [orders]);
 
   const markOrderPaid = async (orderId) => {

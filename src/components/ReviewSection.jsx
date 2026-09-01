@@ -24,7 +24,7 @@ export default function ReviewSection({ productId }) {
     fetchReviews();
   }, [productId]);
 
-  const fetchReviews = async () => {
+  async function fetchReviews() {
     const q = query(
       collection(db, "reviews"),
       where("productId", "==", productId)
@@ -38,7 +38,7 @@ export default function ReviewSection({ productId }) {
     }));
 
     setReviews(reviewList);
-  };
+  }
 
   const submitReview = async (e) => {
     e.preventDefault();

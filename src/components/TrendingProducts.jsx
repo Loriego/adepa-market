@@ -9,11 +9,7 @@ import ProductCard from "./ProductCard";
 export default function TrendingProducts() {
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     const snapshot = await getDocs(collection(db, "products"));
 
     const allProducts = snapshot.docs.map((doc) => ({
@@ -22,7 +18,11 @@ export default function TrendingProducts() {
     }));
 
     setProducts(allProducts.slice(0, 10));
-  };
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   if (products.length === 0) return null;
 

@@ -20,14 +20,7 @@ export default function VendorDashboard() {
   const [vendor, setVendor] = useState(null);
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    if (user) {
-      fetchVendor();
-      fetchVendorProducts();
-    }
-  }, [user]);
-
-  const fetchVendor = async () => {
+  async function fetchVendor() {
     const q = query(
       collection(db, "vendors"),
       where("userId", "==", user.uid)
@@ -41,9 +34,9 @@ export default function VendorDashboard() {
         ...snapshot.docs[0].data(),
       });
     }
-  };
+  }
 
-  const fetchVendorProducts = async () => {
+  async function fetchVendorProducts() {
     const q = query(
       collection(db, "products"),
       where("vendorId", "==", user.uid)
@@ -57,7 +50,14 @@ export default function VendorDashboard() {
         ...doc.data(),
       }))
     );
-  };
+  }
+
+  useEffect(() => {
+    if (user) {
+      fetchVendor();
+      fetchVendorProducts();
+    }
+  }, [user]);
 
   return (
     <div className="w-full overflow-x-hidden">

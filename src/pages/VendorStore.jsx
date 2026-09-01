@@ -29,11 +29,7 @@ export default function VendorStore() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
-  useEffect(() => {
-    fetchVendorStore();
-  }, [vendorId]);
-
-  const fetchVendorStore = async () => {
+  async function fetchVendorStore() {
     const vendorQuery = query(
       collection(db, "vendors"),
       where("userId", "==", vendorId)
@@ -61,7 +57,11 @@ export default function VendorStore() {
         ...doc.data(),
       }))
     );
-  };
+  }
+
+  useEffect(() => {
+    fetchVendorStore();
+  }, [vendorId]);
 
   const categories = useMemo(() => {
     return [

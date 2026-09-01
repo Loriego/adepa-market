@@ -9,11 +9,7 @@ import ProductCard from "./ProductCard";
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     const snapshot = await getDocs(collection(db, "products"));
 
     const allProducts = snapshot.docs.map((doc) => ({
@@ -24,7 +20,11 @@ export default function FeaturedProducts() {
     setProducts(
       allProducts.filter((item) => item.isFeatured).slice(0, 10)
     );
-  };
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   if (products.length === 0) return null;
 

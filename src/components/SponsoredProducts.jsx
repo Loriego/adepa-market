@@ -8,11 +8,7 @@ import { db } from "../firebase/firebaseConfig";
 export default function SponsoredProducts() {
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
+  async function loadProducts() {
     try {
       const snapshot = await getDocs(collection(db, "products"));
 
@@ -29,7 +25,11 @@ export default function SponsoredProducts() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   if (products.length === 0) return null;
 

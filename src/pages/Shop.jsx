@@ -31,11 +31,7 @@ export default function Shop() {
   const [maxPrice, setMaxPrice] = useState("");
   const [discountOnly, setDiscountOnly] = useState(false);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     const snapshot = await getDocs(collection(db, "products"));
 
     const productList = snapshot.docs.map((doc) => ({
@@ -44,7 +40,11 @@ export default function Shop() {
     }));
 
     setProducts(productList);
-  };
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const categories = useMemo(() => {
     return [

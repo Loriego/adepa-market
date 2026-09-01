@@ -45,11 +45,7 @@ export default function AdminDashboard() {
   const [salesData, setSalesData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  async function fetchDashboardData() {
     const productsSnapshot = await getDocs(collection(db, "products"));
     const ordersSnapshot = await getDocs(collection(db, "orders"));
     const vendorsSnapshot = await getDocs(collection(db, "vendors"));
@@ -134,7 +130,11 @@ export default function AdminDashboard() {
       vendors: vendorsSnapshot.size,
       pendingVendors,
     });
-  };
+  }
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   const cards = [
     {

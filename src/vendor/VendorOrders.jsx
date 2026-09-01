@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import {
   ShoppingBag,
@@ -16,7 +16,6 @@ export default function VendorOrders() {
   const { user } = useAuth();
 
   const [orders, setOrders] = useState([]);
-  const [vendorOrders, setVendorOrders] = useState([]);
 
   useEffect(() => {
     const q = query(collection(db, "orders"));
@@ -33,10 +32,10 @@ export default function VendorOrders() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
+  const vendorOrders = useMemo(() => {
+    if (!user) return [];
 
-    const filtered = orders
+    return orders
       .map((order) => {
         const items = order.items?.filter(
           (item) => item.vendorId === user.uid
@@ -57,8 +56,6 @@ export default function VendorOrders() {
         };
       })
       .filter(Boolean);
-
-    setVendorOrders(filtered);
   }, [orders, user]);
 
   const totalSales = vendorOrders.reduce(

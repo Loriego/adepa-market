@@ -38,11 +38,7 @@ export default function VendorEditProduct() {
   const cloudName = "dayc6qwau";
   const uploadPreset = "adepa_market";
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  async function fetchProduct() {
     const docRef = doc(db, "products", id);
     const docSnap = await getDoc(docRef);
 
@@ -66,7 +62,11 @@ export default function VendorEditProduct() {
       discount: data.discount || "",
       images: data.images?.length ? data.images : [data.image],
     });
-  };
+  }
+
+  useEffect(() => {
+    fetchProduct();
+  }, [id]);
 
   const handleChange = (e) => {
     setProduct({

@@ -37,11 +37,7 @@ export default function VendorAddProduct() {
   const cloudName = "dayc6qwau";
   const uploadPreset = "adepa_market";
 
-  useEffect(() => {
-    if (user) fetchVendor();
-  }, [user]);
-
-  const fetchVendor = async () => {
+  async function fetchVendor() {
     const q = query(
       collection(db, "vendors"),
       where("userId", "==", user.uid)
@@ -55,7 +51,11 @@ export default function VendorAddProduct() {
         ...snapshot.docs[0].data(),
       });
     }
-  };
+  }
+
+  useEffect(() => {
+    if (user) fetchVendor();
+  }, [user]);
 
   const handleChange = (e) => {
     setProduct({

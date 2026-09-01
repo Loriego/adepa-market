@@ -52,12 +52,7 @@ export default function ProductDetails() {
 
   const whatsappNumber = "233247440127";
 
-  useEffect(() => {
-    fetchProduct();
-    fetchRelatedProducts();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  async function fetchProduct() {
     setLoading(true);
 
     try {
@@ -78,9 +73,9 @@ export default function ProductDetails() {
     }
 
     setLoading(false);
-  };
+  }
 
-  const fetchRelatedProducts = async () => {
+  async function fetchRelatedProducts() {
     try {
       const snapshot = await getDocs(collection(db, "products"));
 
@@ -93,7 +88,12 @@ export default function ProductDetails() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchProduct();
+    fetchRelatedProducts();
+  }, [id]);
 
   if (loading) {
     return (

@@ -13,11 +13,7 @@ import { db } from "../firebase/firebaseConfig";
 export default function FeaturedVendors() {
   const [vendors, setVendors] = useState([]);
 
-  useEffect(() => {
-    loadVendors();
-  }, []);
-
-  const loadVendors = async () => {
+  async function loadVendors() {
     try {
       const q = query(
         collection(db, "vendors"),
@@ -35,7 +31,11 @@ export default function FeaturedVendors() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+  useEffect(() => {
+    loadVendors();
+  }, []);
 
   return (
     <section className="py-16 bg-white">

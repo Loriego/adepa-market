@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const { login, isAdmin } = useAuth();
+  const { login } = useAuth();
 
   const [loading, setLoading] = useState(false);
 

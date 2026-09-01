@@ -16,10 +16,6 @@ export default function FlashSale() {
   });
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         let { hours, minutes, seconds } = prev;
@@ -51,7 +47,7 @@ export default function FlashSale() {
     return () => clearInterval(timer);
   }, []);
 
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     try {
       const snapshot = await getDocs(collection(db, "products"));
 
@@ -71,7 +67,11 @@ export default function FlashSale() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   if (products.length === 0) return null;
 

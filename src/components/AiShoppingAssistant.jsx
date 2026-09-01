@@ -15,11 +15,7 @@ export default function AiShoppingAssistant() {
     "Hi, I’m Adepa AI. Ask me for products like: sneakers under GH₵500, phones, gadgets, flash sales."
   );
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     const snapshot = await getDocs(collection(db, "products"));
 
     const productList = snapshot.docs.map((doc) => ({
@@ -28,7 +24,11 @@ export default function AiShoppingAssistant() {
     }));
 
     setProducts(productList);
-  };
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const extractMaxPrice = (text) => {
     const match = text.match(/(?:under|below|less than|within|budget)\s*(gh₵|ghc|₵)?\s*(\d+)/i);

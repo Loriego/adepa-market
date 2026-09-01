@@ -1,16 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 const RecentlyViewedContext = createContext();
 
 export function RecentlyViewedProvider({ children }) {
-  const [recentlyViewed, setRecentlyViewed] = useState([]);
-
-  useEffect(() => {
-    const stored =
-      JSON.parse(localStorage.getItem("recentlyViewed")) || [];
-
-    setRecentlyViewed(stored);
-  }, []);
+  const [recentlyViewed, setRecentlyViewed] = useState(
+    () => JSON.parse(localStorage.getItem("recentlyViewed")) || []
+  );
 
   const addRecentlyViewed = (product) => {
     const updated = [

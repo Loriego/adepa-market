@@ -5,18 +5,37 @@ import { Sparkles, Flame, Tags } from "lucide-react";
 import { db } from "../firebase/firebaseConfig";
 import ProductCard from "./ProductCard";
 
+function Section({ title, subtitle, icon: Icon, products }) {
+  if (products.length === 0) return null;
+
+  return (
+    <section className="max-w-7xl mx-auto px-5 py-12">
+      <div className="mb-8 flex items-center gap-3">
+        <div className="bg-orange-100 text-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center">
+          <Icon size={28} />
+        </div>
+
+        <div>
+          <p className="text-orange-600 font-black">{subtitle}</p>
+          <h2 className="text-3xl md:text-4xl font-black">{title}</h2>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function SmartRecommendations({ currentProduct }) {
   const [sameCategory, setSameCategory] = useState([]);
   const [bestDeals, setBestDeals] = useState([]);
   const [featured, setFeatured] = useState([]);
 
-  useEffect(() => {
-    if (currentProduct) {
-      fetchRecommendations();
-    }
-  }, [currentProduct]);
-
-  const fetchRecommendations = async () => {
+  async function fetchRecommendations() {
     const snapshot = await getDocs(collection(db, "products"));
 
     const products = snapshot.docs.map((doc) => ({
@@ -45,32 +64,13 @@ export default function SmartRecommendations({ currentProduct }) {
         .filter((item) => item.isFeatured)
         .slice(0, 4)
     );
-  };
+  }
 
-  const Section = ({ title, subtitle, icon: Icon, products }) => {
-    if (products.length === 0) return null;
-
-    return (
-      <section className="max-w-7xl mx-auto px-5 py-12">
-        <div className="mb-8 flex items-center gap-3">
-          <div className="bg-orange-100 text-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center">
-            <Icon size={28} />
-          </div>
-
-          <div>
-            <p className="text-orange-600 font-black">{subtitle}</p>
-            <h2 className="text-3xl md:text-4xl font-black">{title}</h2>
-          </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-    );
-  };
+  useEffect(() => {
+    if (currentProduct) {
+      fetchRecommendations();
+    }
+  }, [currentProduct]);
 
   return (
     <>
