@@ -1,47 +1,32 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { Package, Store, Users, Headphones } from "lucide-react";
+import { Package, Store, ShieldCheck, Headphones } from "lucide-react";
 import { db } from "../firebase/firebaseConfig";
 
 export default function MarketplaceStats() {
-  const [stats, setStats] = useState({ products: 0, vendors: 0, customers: 0 });
+  const [stats, setStats] = useState({ products: 0, vendors: 0 });
 
   useEffect(() => {
-    const loadStats = async () => {
-      try {
-        const [productsSnap, vendorsSnap, usersSnap] = await Promise.all([
-          getDocs(collection(db, "products")),
-          getDocs(collection(db, "vendors")),
-          getDocs(collection(db, "users")),
-        ]);
-        setStats({ products: productsSnap.size, vendors: vendorsSnap.size, customers: usersSnap.size });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    loadStats();
+    Promise.all([getDocs(collection(db, "products")), getDocs(collection(db, "vendors"))])
+      .then(([products, vendors]) => setStats({ products: products.size, vendors: vendors.size }))
+      .catch(() => {});
   }, []);
 
   const items = [
-    { icon: Package, value: `${stats.products}+`, label: "Products to discover" },
-    { icon: Store, value: `${stats.vendors}+`, label: "Marketplace vendors" },
-    { icon: Users, value: `${stats.customers}+`, label: "Adepa customers" },
-    { icon: Headphones, value: "24/7", label: "Shopping support" },
+    { icon: Package, value: stats.products || "New", label: "Products online" },
+    { icon: Store, value: stats.vendors || "Growing", label: "Seller community" },
+    { icon: ShieldCheck, value: "Secure", label: "Checkout experience" },
+    { icon: Headphones, value: "Support", label: "When you need help" },
   ];
 
   return (
-    <section className="bg-white pb-12 md:pb-16">
-      <div className="max-w-7xl mx-auto px-5">
-        <div className="grid grid-cols-2 lg:grid-cols-4 rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
+    <section className="bg-white pb-10 md:pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 border-y border-slate-200">
           {items.map(({ icon: Icon, value, label }, index) => (
-            <div key={label} className={`p-5 md:p-6 flex items-center gap-4 ${index % 2 === 0 ? "border-r border-slate-200" : ""} ${index < 2 ? "border-b lg:border-b-0" : ""} ${index === 1 ? "lg:border-r" : ""}`}>
-              <div className="w-10 h-10 rounded-xl bg-white shadow-sm text-orange-600 flex items-center justify-center flex-shrink-0">
-                <Icon size={19} />
-              </div>
-              <div>
-                <p className="text-xl md:text-2xl font-black tracking-tight text-gray-950">{value}</p>
-                <p className="text-xs md:text-sm text-gray-500 font-semibold">{label}</p>
-              </div>
+            <div key={label} className={`py-4 md:py-5 flex items-center gap-3 ${index % 2 === 0 ? "pr-3 border-r border-slate-200" : "pl-3"} ${index > 1 ? "border-t lg:border-t-0" : ""} lg:px-5 lg:border-r lg:last:border-r-0`}>
+              <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0"><Icon size={17} /></div>
+              <div className="min-w-0"><p className="text-sm md:text-base font-black truncate">{value}</p><p className="text-[10px] md:text-xs text-gray-500 truncate">{label}</p></div>
             </div>
           ))}
         </div>
