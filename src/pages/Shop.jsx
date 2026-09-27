@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
+import { useSearchParams } from "react-router-dom";
 import {
   Search,
   SlidersHorizontal,
@@ -17,9 +18,10 @@ import ProductCard from "../components/ProductCard";
 import { db } from "../firebase/firebaseConfig";
 
 export default function Shop() {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [suggestions, setSuggestions] = useState([]);
 
   const [category, setCategory] = useState("All");
@@ -34,6 +36,12 @@ export default function Shop() {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    setSearch(searchParams.get("search") || "");
+    setFlashOnly(searchParams.get("deals") === "true");
+    if (searchParams.get("sort") === "newest") setSort("Newest");
+  }, [searchParams]);
 
   const fetchProducts = async () => {
     const snapshot = await getDocs(collection(db, "products"));
