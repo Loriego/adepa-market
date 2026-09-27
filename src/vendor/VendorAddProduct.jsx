@@ -8,6 +8,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
+import { ImagePlus, PackagePlus, CheckCircle2, X } from "lucide-react";
 
 import { db } from "../firebase/firebaseConfig";
 import { useAuth } from "../context/AuthContext";
@@ -21,13 +22,18 @@ export default function VendorAddProduct() {
 
   const [product, setProduct] = useState({
     name: "",
+    brand: "",
+    sku: "",
     price: "",
     oldPrice: "",
     discount: "",
     category: "",
+    condition: "New",
     description: "",
     stock: "In Stock",
+    stockQuantity: "",
     supplier: "",
+    tags: "",
     image: "",
     images: [],
     isFlashSale: false,
@@ -157,6 +163,8 @@ export default function VendorAddProduct() {
         price: Number(product.price),
         oldPrice: Number(product.oldPrice || 0),
         discount: Number(product.discount || 0),
+        stockQuantity: Number(product.stockQuantity || 0),
+        tags: String(product.tags || "").split(",").map((tag) => tag.trim()).filter(Boolean),
 
         vendorId: user.uid,
         vendorDocId: vendor.id,
@@ -173,13 +181,18 @@ export default function VendorAddProduct() {
 
       setProduct({
         name: "",
+        brand: "",
+        sku: "",
         price: "",
         oldPrice: "",
         discount: "",
         category: "",
+        condition: "New",
         description: "",
         stock: "In Stock",
+        stockQuantity: "",
         supplier: "",
+        tags: "",
         image: "",
         images: [],
         isFlashSale: false,
