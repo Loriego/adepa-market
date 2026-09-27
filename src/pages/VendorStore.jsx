@@ -28,6 +28,8 @@ export default function VendorStore() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [followers, setFollowers] = useState(1200);
+  const [following, setFollowing] = useState(false);
 
   useEffect(() => {
     fetchVendorStore();
@@ -87,6 +89,11 @@ export default function VendorStore() {
   const resetFilters = () => {
     setSearch("");
     setCategory("All");
+  };
+
+  const handleFollow = () => {
+    setFollowers((prev) => (following ? Math.max(0, prev - 1) : prev + 1));
+    setFollowing((prev) => !prev);
   };
 
   const whatsappMessage = encodeURIComponent(
@@ -167,6 +174,13 @@ export default function VendorStore() {
                     WhatsApp Seller
                   </a>
                 )}
+
+                <button
+                  onClick={handleFollow}
+                  className={`mt-3 w-full py-3 rounded-full font-black transition ${following ? "bg-green-600 text-white" : "bg-orange-600 text-white hover:bg-orange-700"}`}
+                >
+                  {following ? "Following ✓" : "Follow Vendor"}
+                </button>
               </div>
             </div>
           </div>
@@ -227,7 +241,7 @@ export default function VendorStore() {
             <div className="bg-white rounded-3xl p-6 shadow-sm">
               <Users className="text-blue-600 mb-3" />
               <p className="text-gray-500 font-bold">Store Followers</p>
-              <h3 className="text-3xl font-black">1.2K</h3>
+              <h3 className="text-3xl font-black">{followers.toLocaleString()}</h3>
             </div>
           </div>
 
