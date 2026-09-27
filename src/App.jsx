@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 // CONTEXTS
 import { CartProvider } from "./context/CartContext";
@@ -49,6 +50,19 @@ export default function App() {
       <WishlistProvider>
         <CartProvider>
           <BrowserRouter>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 2200,
+                style: {
+                  borderRadius: "14px",
+                  background: "#111827",
+                  color: "#fff",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                },
+              }}
+            />
             <Routes>
               {/* CUSTOMER */}
               <Route path="/" element={<Home />} />
