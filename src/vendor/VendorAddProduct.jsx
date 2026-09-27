@@ -8,7 +8,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
-import { ImagePlus, PackagePlus, CheckCircle2, X } from "lucide-react";
 
 import { db } from "../firebase/firebaseConfig";
 import { useAuth } from "../context/AuthContext";
@@ -269,6 +268,26 @@ export default function VendorAddProduct() {
             required
           />
 
+          <div className="grid md:grid-cols-2 gap-5">
+            <input
+              type="text"
+              name="brand"
+              placeholder="Brand e.g. JBL, Samsung, Nike"
+              value={product.brand}
+              onChange={handleChange}
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+            />
+
+            <input
+              type="text"
+              name="sku"
+              placeholder="SKU / Product Code"
+              value={product.sku}
+              onChange={handleChange}
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+            />
+          </div>
+
           <div className="grid md:grid-cols-3 gap-5">
             <input
               type="number"
@@ -309,6 +328,18 @@ export default function VendorAddProduct() {
             required
           />
 
+          <select
+            name="condition"
+            value={product.condition}
+            onChange={handleChange}
+            className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+          >
+            <option>New</option>
+            <option>Used - Like New</option>
+            <option>Used - Good</option>
+            <option>Refurbished</option>
+          </select>
+
           <textarea
             name="description"
             placeholder="Product Description"
@@ -331,6 +362,16 @@ export default function VendorAddProduct() {
             </select>
 
             <input
+              type="number"
+              min="0"
+              name="stockQuantity"
+              placeholder="Stock Quantity"
+              value={product.stockQuantity}
+              onChange={handleChange}
+              className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+            />
+
+            <input
               type="text"
               name="supplier"
               placeholder="Supplier / Source"
@@ -339,6 +380,15 @@ export default function VendorAddProduct() {
               className="border p-5 rounded-2xl outline-none focus:border-orange-500"
             />
           </div>
+
+          <input
+            type="text"
+            name="tags"
+            placeholder="Search tags separated by commas"
+            value={product.tags}
+            onChange={handleChange}
+            className="border p-5 rounded-2xl outline-none focus:border-orange-500"
+          />
 
           <div className="grid md:grid-cols-2 gap-5">
             <label className="flex items-center gap-3 font-bold bg-orange-50 p-5 rounded-3xl">
