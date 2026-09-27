@@ -49,13 +49,24 @@ export default function Navbar() {
 
   return (
     <>
+      <div className="hidden md:block bg-gray-950 text-white">
+        <div className="max-w-[1500px] mx-auto px-5 lg:px-6 h-8 flex items-center justify-between text-[10px] lg:text-[11px] font-bold">
+          <p className="text-gray-300">Shop online with delivery across Ghana</p>
+          <div className="flex items-center gap-5 text-gray-400">
+            <Link to="/vendor" className="hover:text-white transition">Sell on Adepa</Link>
+            <Link to="/track-order" className="hover:text-white transition">Track order</Link>
+            <Link to="/contact" className="hover:text-white transition">Help & support</Link>
+          </div>
+        </div>
+      </div>
+
       <motion.nav
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.35 }}
-        className="sticky top-0 z-[9999] bg-white/90 backdrop-blur-2xl border-b border-slate-200/70 shadow-[0_6px_24px_rgba(15,23,42,0.04)]"
+        className="sticky top-0 z-[9999] bg-white/95 backdrop-blur-2xl border-b border-slate-200/80 shadow-[0_4px_18px_rgba(15,23,42,0.04)]"
       >
-        <div className="max-w-[1500px] mx-auto px-4 lg:px-6 py-2.5">
+        <div className="max-w-[1500px] mx-auto px-4 lg:px-6 py-2 md:py-2.5">
           <div className="flex items-center gap-4 lg:gap-6">
             <button
               onClick={() => setOpen(true)}
@@ -185,8 +196,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          <form onSubmit={submitSearch} className="md:hidden mt-3 flex">
-            <div className="flex w-full rounded-full border border-gray-200 bg-gray-50 overflow-hidden">
+          <form onSubmit={submitSearch} className="md:hidden mt-2 pb-1 flex">
+            <div className="flex w-full rounded-xl border border-gray-200 bg-gray-50 overflow-hidden focus-within:bg-white focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100 transition">
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
