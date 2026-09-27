@@ -164,28 +164,28 @@ export default function Shop() {
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-slate-100 overflow-x-hidden">
-        <section className="bg-black text-white py-16 md:py-20">
+      <main className="min-h-screen bg-slate-50 overflow-x-hidden">
+        <section className="bg-gray-950 text-white py-10 md:py-14">
           <div className="max-w-7xl mx-auto px-5">
-            <p className="text-orange-500 font-black tracking-wide">
+            <p className="text-orange-400 text-xs font-extrabold tracking-[0.14em]">
               ADEPA MARKETPLACE
             </p>
 
-            <h1 className="text-5xl md:text-7xl font-black mt-3">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight mt-2">
               Shop Products
             </h1>
 
-            <p className="text-gray-300 mt-5 max-w-2xl text-lg">
+            <p className="text-gray-400 mt-3 max-w-2xl text-sm md:text-base leading-7">
               Search products by name, category, vendor shop, flash sales and
               best deals across Adepa Market.
             </p>
           </div>
         </section>
 
-        <section className="max-w-7xl mx-auto px-5 -mt-10 relative z-10">
-          <div className="bg-white rounded-[2rem] shadow-xl p-5 grid md:grid-cols-5 gap-4">
+        <section className="max-w-7xl mx-auto px-5 -mt-6 relative z-10">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_14px_40px_rgba(15,23,42,0.07)] p-4 md:p-5 grid md:grid-cols-5 gap-3">
             <div className="md:col-span-2 relative">
-              <Search className="absolute left-5 top-5 text-gray-400" />
+              <Search className="absolute left-4 top-4 text-gray-400" />
 
               <input
                 value={search}
@@ -194,7 +194,7 @@ export default function Shop() {
                   if (search.trim()) handleSearch(search);
                 }}
                 placeholder="Search products, categories or vendors..."
-                className="w-full border p-5 pl-14 rounded-2xl outline-none focus:border-orange-600"
+                className="w-full border border-slate-200 p-3.5 pl-12 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 text-sm transition"
               />
 
               {suggestions.length > 0 && (
@@ -231,7 +231,7 @@ export default function Shop() {
             <select
               value={vendor}
               onChange={(e) => setVendor(e.target.value)}
-              className="border p-5 rounded-2xl outline-none focus:border-orange-600"
+              className="border border-slate-200 p-3.5 rounded-xl outline-none focus:border-orange-600"
             >
               {vendors.map((item) => (
                 <option key={item} value={item}>
@@ -243,7 +243,7 @@ export default function Shop() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="border p-5 rounded-2xl outline-none focus:border-orange-600"
+              className="border border-slate-200 p-3.5 rounded-xl outline-none focus:border-orange-600"
             >
               <option>Newest</option>
               <option>Price Low → High</option>
@@ -254,7 +254,7 @@ export default function Shop() {
 
             <button
               onClick={resetFilters}
-              className="bg-black text-white rounded-2xl p-5 font-black flex items-center justify-center gap-2 active:scale-95 transition"
+              className="bg-gray-950 hover:bg-orange-600 text-white rounded-xl p-3.5 text-sm font-extrabold flex items-center justify-center gap-2 active:scale-95 transition"
             >
               <RotateCcw size={20} />
               Reset Filters
@@ -265,7 +265,7 @@ export default function Shop() {
                 <button
                   key={item}
                   onClick={() => setCategory(item)}
-                  className={`px-5 py-3 rounded-full font-black transition ${
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition ${
                     category === item
                       ? "bg-orange-600 text-white shadow"
                       : "bg-slate-100 text-slate-700 hover:bg-orange-100"
@@ -368,36 +368,36 @@ export default function Shop() {
         </section>
 
         <section className="max-w-7xl mx-auto px-5 py-10">
-          <div className="grid sm:grid-cols-4 gap-5 mb-10">
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
               <ShoppingBag className="text-orange-600 mb-3" />
               <p className="text-gray-500 font-bold">Total Products</p>
-              <h3 className="text-3xl font-black">{products.length}</h3>
+              <h3 className="text-2xl font-black tracking-tight">{products.length}</h3>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
               <Store className="text-orange-600 mb-3" />
               <p className="text-gray-500 font-bold">Vendor Stores</p>
-              <h3 className="text-3xl font-black">{vendors.length - 1}</h3>
+              <h3 className="text-2xl font-black tracking-tight">{vendors.length - 1}</h3>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
               <Tags className="text-orange-600 mb-3" />
               <p className="text-gray-500 font-bold">Categories</p>
-              <h3 className="text-3xl font-black">{categories.length - 1}</h3>
+              <h3 className="text-2xl font-black tracking-tight">{categories.length - 1}</h3>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
               <BadgePercent className="text-yellow-500 mb-3" />
               <p className="text-gray-500 font-bold">Sponsored</p>
-              <h3 className="text-3xl font-black">{sponsoredProducts}</h3>
+              <h3 className="text-2xl font-black tracking-tight">{sponsoredProducts}</h3>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
             <div className="flex items-center gap-3">
               <SlidersHorizontal className="text-orange-600" />
-              <h2 className="text-3xl font-black">
+              <h2 className="text-2xl font-black tracking-tight">
                 Showing {filteredProducts.length} of {products.length} Products
               </h2>
             </div>
