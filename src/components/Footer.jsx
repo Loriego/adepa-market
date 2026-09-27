@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Instagram, Facebook, Mail, Phone, MapPin, ArrowUp } from "lucide-react";
+import { ShoppingCart, Mail, Phone, MapPin, ArrowUp } from "lucide-react";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -17,10 +17,6 @@ export default function Footer() {
               <span className="text-xl font-black">Adepa<span className="text-orange-500">Market</span></span>
             </Link>
             <p className="text-sm text-slate-400 leading-6 mt-4 max-w-sm">A modern marketplace for discovering products and shopping from sellers in Ghana.</p>
-            <div className="flex gap-2 mt-5">
-              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram" className="w-9 h-9 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-orange-500 transition"><Instagram size={16} /></a>
-              <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook" className="w-9 h-9 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-orange-500 transition"><Facebook size={16} /></a>
-            </div>
           </div>
 
           <div><h3 className="text-sm font-extrabold">Shop</h3><div className="mt-4 space-y-3 text-sm text-slate-400"><Link className="block hover:text-white" to="/shop">All products</Link><Link className="block hover:text-white" to="/shop?deals=true">Deals</Link><Link className="block hover:text-white" to="/wishlist">Wishlist</Link><Link className="block hover:text-white" to="/cart">Cart</Link></div></div>
