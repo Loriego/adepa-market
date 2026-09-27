@@ -53,9 +53,9 @@ export default function Navbar() {
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.35 }}
-        className="sticky top-0 z-[9999] bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm"
+        className="sticky top-0 z-[9999] bg-white/90 backdrop-blur-2xl border-b border-slate-200/70 shadow-[0_6px_24px_rgba(15,23,42,0.04)]"
       >
-        <div className="max-w-[1500px] mx-auto px-4 lg:px-6 py-3">
+        <div className="max-w-[1500px] mx-auto px-4 lg:px-6 py-2.5">
           <div className="flex items-center gap-4 lg:gap-6">
             <button
               onClick={() => setOpen(true)}
@@ -69,14 +69,14 @@ export default function Navbar() {
               to="/"
               className="flex items-center gap-2 flex-shrink-0"
             >
-              <div className="w-11 h-11 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-sm">
                 <ShoppingCart size={25} />
               </div>
               <div className="hidden sm:block leading-tight">
-                <span className="text-xl lg:text-2xl font-black text-gray-950">
+                <span className="text-lg lg:text-xl font-black text-gray-950">
                   Adepa
                 </span>
-                <span className="text-xl lg:text-2xl font-black text-orange-600">
+                <span className="text-lg lg:text-xl font-black text-orange-600">
                   Market
                 </span>
                 <p className="text-[10px] text-gray-400 font-bold tracking-wide">
@@ -111,7 +111,7 @@ export default function Navbar() {
               onSubmit={submitSearch}
               className="hidden md:flex flex-1 max-w-xl ml-auto"
             >
-              <div className="flex w-full rounded-full border border-gray-200 bg-gray-50 overflow-hidden focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100 transition">
+              <div className="flex w-full rounded-xl border border-slate-200 bg-slate-50 overflow-hidden focus-within:bg-white focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100 transition">
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -120,7 +120,7 @@ export default function Navbar() {
                 />
                 <button
                   type="submit"
-                  className="w-14 bg-orange-600 text-white flex items-center justify-center hover:bg-orange-700 transition"
+                  className="w-12 bg-orange-600 text-white flex items-center justify-center hover:bg-orange-700 transition"
                   aria-label="Search"
                 >
                   <Search size={21} />
